@@ -1,3 +1,4 @@
+# Video to Photos(1280x960)
 import cv2
 count=0
 frame=6
