@@ -22,4 +22,4 @@ while success:
     else:
         frame+=1
                                 
-print("Done! Photo value > " + str(shot))
+print("Done! Photo value -> " + str(shot))
