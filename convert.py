@@ -4,6 +4,7 @@ count=0
 frame=6
 shot=0
 
+
 video= cv2.VideoCapture("vid.mp4")
 success, image = video.read()
 
