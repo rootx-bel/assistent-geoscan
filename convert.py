@@ -22,4 +22,6 @@ while success:
     else:
         frame+=1
                                 
-print("Done! Photo value -> " + str(shot))
+if count != 0: print("Done! Photo value -> " + str(shot))
+else: print("Error! File not found!")
+
