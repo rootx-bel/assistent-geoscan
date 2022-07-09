@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
-import wx
+# import wx
 from back.video import FrameProcessor
 
-app=wx.App(False)
-width, height = wx.GetDisplaySize()
+# app=wx.App(False)
+width, height = 1920, 1080
 
 
 class Thread(QtCore.QThread):
