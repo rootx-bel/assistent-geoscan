@@ -11,6 +11,7 @@ class MainWindow(QMainWindow):
         self.setupUi()
     def setupUi(self):
         self.setWindowTitle("MainInterface") 
+        
 
         stacked_widget =  QStackedWidget()
         real_w = RealWidget()
