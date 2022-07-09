@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 import sys
 from PyQt5.QtGui import *
 from PyQt5 import *
+from ui.video import RealWidget
 
 
 class MainWindow(QMainWindow): 
@@ -12,12 +13,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("MainInterface") 
 
         stacked_widget =  QStackedWidget()
+        real_w = RealWidget()
+        stacked_widget.addWidget(real_w)
+        stacked_widget.setCurrentWidget(real_w)
 
-        layout =  QVBoxLayout()
-        layout.addWidget(stacked_widget)
-        self.setLayout(layout)
-
-
+        self.setCentralWidget(stacked_widget)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
