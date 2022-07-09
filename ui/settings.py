@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QCheckBox, QLabel, QDesktopWidget, QPushButton, QComboBox, QSlider
+from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QPushButton, QComboBox, QSlider
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-class Settings(QMainWindow):
+class Settings(QWidget):
     def __init__(self):
         self.result = {}
 
