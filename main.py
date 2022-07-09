@@ -18,6 +18,7 @@ class MainWindow(QMainWindow):
         self.setLayout(layout)
 
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()
