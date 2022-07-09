@@ -10,7 +10,6 @@ class StartWidget(QWidget):
         liveButton = QPushButton("Live flight")
         loadButton = QPushButton("Load videos")
         exitButton = QPushButton("Exit")
-        self.setFixedSize(600, 300)
 
         exitButton.clicked.connect(self.exitButtonClicked) 
 
