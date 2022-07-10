@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
 from back.video import FrameProcessor
+from ui.settings import Settings
 
 try:
     import wx
@@ -65,9 +66,10 @@ class PlayStreaming(QtWidgets.QLabel):
 
 
 class RealWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super(RealWidget, self).__init__(parent)
+    def __init__(self):
+        super(RealWidget, self).__init__()
         self.setWindowTitle('Visual Assistant')
+        self.settings = Settings()
 
         # Initialize tab screen
         self.tabs = QtWidgets.QTabWidget()
@@ -85,9 +87,6 @@ class RealWidget(QtWidgets.QWidget):
         self.tab1.layout.addWidget(self.display, stretch=1)
         # self.tab1.layout.addWidget(self.horizontalGroupBox)
         self.tab1.setLayout(self.tab1.layout)
-
-        from ui.settings import Settings
-        self.settings = Settings()
         self.tab2.layout = QtWidgets.QVBoxLayout()
         self.tab2.layout.addWidget(self.settings, stretch=1)
         self.tab2.setLayout(self.tab2.layout)
@@ -100,6 +99,7 @@ class RealWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
         
     def show(self):
+        
         self.display.th.start()
         super().show(self)
 
