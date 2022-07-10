@@ -1,4 +1,4 @@
-from PyQt4 import QtCore, QtGui, QtDesigner
+from PyQt5 import QtCore, QtGui, QtDesigner
 from myui import Ui_Dialog
 
 def dump_ui(widget, path):
