@@ -87,6 +87,7 @@ class Settings(QWidget):
         self.combobox.move(650,100)
 
         self.my_slider = QSlider(Qt.Horizontal, self)
+        self.my_slider.setValue(50)
         self.my_slider.setGeometry(15, 20, 100, 15)
         self.my_slider.move(650,55)
 
