@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QPushButton, QComboBox, QSlider, QApplication, QMainWindow, QDesktopWidget, QVBoxLayout, QHBoxLayout
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 import sys
 
 
@@ -28,8 +28,7 @@ class StartWidget(QWidget):
         
     def exitButtonClicked(self):
         #save settings here
-        QApplication.quit()
-       
+        self.QCoreApplication.instance().quit       
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
