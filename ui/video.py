@@ -1,15 +1,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
-# import wx
 from back.video import FrameProcessor
 
-# app=wx.App(False)
-width, height = 1920, 1080
-
+try:
+    import wx
+    app=wx.App(False)
+    width, height = wx.GetDisplaySize()
+except:
+    width, height = 1920, 1080
 
 class Thread(QtCore.QThread):
-    changePixmap = QtCore.pyqtSignal(QtGui.QImage)
-    scaled_size = QtCore.QSize(width*3//4, height)
+    change_pixmap = QtCore.pyqtSignal(QtGui.QImage)
+    scaled_size = QtCore.QSize(width, height)
     
     
     def run(self):
@@ -19,17 +21,18 @@ class Thread(QtCore.QThread):
             ret, frame = cap.read()
             if ret:
                 img = fp.get_segmentation(frame)
-                rgbImage = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                convertToQtFormat = QtGui.QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QtGui.QImage.Format_RGB888)
+                rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                # rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                convertToQtFormat = QtGui.QImage(rgb_image.data, rgb_image.shape[1], rgb_image.shape[0], QtGui.QImage.Format_RGB888)
                 p = convertToQtFormat.scaled(self.scaled_size, QtCore.Qt.KeepAspectRatio)
-                self.changePixmap.emit(p)
+                self.change_pixmap.emit(p)
 
     def scaled(self, scaled_size):
         self.scaled_size = scaled_size
 
 
 class PlayStreaming(QtWidgets.QLabel):
-    reSize = QtCore.pyqtSignal(QtCore.QSize)
+    resize = QtCore.pyqtSignal(QtCore.QSize)
     def __init__(self):
         super(PlayStreaming, self).__init__()
         self.initUI()
@@ -47,15 +50,18 @@ class PlayStreaming(QtWidgets.QLabel):
         self.setWindowTitle("Image")
         # create a label
         self.label = QtWidgets.QLabel(self)
-        th = Thread(self)
-        th.changePixmap.connect(self.setImage)
-        self.reSize.connect(th.scaled)
-        th.start()
+        self.th = Thread(self)
+        self.th.change_pixmap.connect(self.setImage)
+        self.resize.connect(self.th.scaled)
+        self.th.start()
         lay = QtWidgets.QVBoxLayout(self)
         lay.addWidget(self.label, alignment=QtCore.Qt.AlignCenter)
 
     def resizeEvent(self, event):
-        self.reSize.emit(self.size())
+        self.resize.emit(self.size())
+
+
+
 
 
 class RealWidget(QtWidgets.QWidget):
@@ -80,11 +86,22 @@ class RealWidget(QtWidgets.QWidget):
         # self.tab1.layout.addWidget(self.horizontalGroupBox)
         self.tab1.setLayout(self.tab1.layout)
 
+        from ui.settings import Settings
+        self.settings = Settings()
+        self.tab2.layout = QtWidgets.QVBoxLayout()
+        self.tab2.layout.addWidget(self.settings, stretch=1)
+        self.tab2.setLayout(self.tab2.layout)
+
         # Add tabs to widget
         layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.tabs)
 
     def createGridLayout(self):
         layout = QtWidgets.QGridLayout()
+        
+    def show(self):
+        self.display.th.start()
+        super().show(self)
 
-
+    def hide(self):
+        self.display.th.quit()
