@@ -1,5 +1,5 @@
-from PyQt4 import QtCore, QtGui, QtDesigner
-from myui import Ui_Dialog
+from PyQt5 import QtCore, QtGui, QtDesigner
+from myui import *
 
 def dump_ui(widget, path):
     builder = QtDesigner.QFormBuilder()

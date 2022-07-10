@@ -3,6 +3,8 @@ import sys
 from PyQt5.QtGui import *
 from PyQt5 import *
 from ui.video import RealWidget
+from ui.settings import Settings
+from ui.start import StartWidget
 
 
 class MainWindow(QMainWindow): 
@@ -13,12 +15,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("MainInterface") 
         
 
-        stacked_widget =  QStackedWidget()
-        real_w = RealWidget()
-        stacked_widget.addWidget(real_w)
-        stacked_widget.setCurrentWidget(real_w)
+        self.stacked_widget =  QStackedWidget()
+        self.start = StartWidget()
+        self.setts = Settings()
+        self.real_w = RealWidget()
+        
+        self.stacked_widget.addWidget(self.start)
+        self.stacked_widget.addWidget(self.real_w)
+        self.stacked_widget.addWidget(self.setts)
+        
+        self.stacked_widget.setCurrentWidget(self.start)
+        # self.stacked_widget.setCurrentWidget(self.setts)
 
-        self.setCentralWidget(stacked_widget)
+        self.setCentralWidget(self.stacked_widget)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
