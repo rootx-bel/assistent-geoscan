@@ -54,15 +54,11 @@ class PlayStreaming(QtWidgets.QLabel):
         self.th = Thread(self)
         self.th.change_pixmap.connect(self.setImage)
         self.resize.connect(self.th.scaled)
-        self.th.start()
         lay = QtWidgets.QVBoxLayout(self)
         lay.addWidget(self.label, alignment=QtCore.Qt.AlignCenter)
 
     def resizeEvent(self, event):
         self.resize.emit(self.size())
-
-
-
 
 
 class RealWidget(QtWidgets.QWidget):
@@ -99,9 +95,9 @@ class RealWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
         
     def show(self):
-        
         self.display.th.start()
         super().show(self)
 
     def hide(self):
         self.display.th.quit()
+        

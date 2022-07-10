@@ -29,12 +29,13 @@ class MainWindow(QMainWindow):
         # self.stacked_widget.setCurrentWidget(self.setts)
 
         self.setCentralWidget(self.stacked_widget)
-        # if self.start_buttons.liveButton is clicked:
-        #     self.stacked_widget.setCurrentWidget(self.real_w)
-        self.start_buttons.liveButton.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.real_w))
+        self.start_buttons.liveButton.clicked.connect(self.set_live)
         self.start_buttons.loadButton.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.start_buttons))
         self.start_buttons.settingsButton.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.setts))
-
+        
+    def set_live(self):
+        self.stacked_widget.setCurrentWidget(self.real_w)
+        self.real_w.display.th.start()
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)
