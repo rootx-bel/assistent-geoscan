@@ -9,14 +9,16 @@ class StartWidget(QWidget):
         super().__init__()
         liveButton = QPushButton("Live flight")
         loadButton = QPushButton("Load videos")
+        settingsButton = QPushButton("Settings")
         exitButton = QPushButton("Exit")
-
+       
         exitButton.clicked.connect(self.exitButtonClicked) 
 
         vbox = QVBoxLayout()
         vbox.addStretch()
         vbox.addWidget(liveButton)
         vbox.addWidget(loadButton)
+        vbox.addWidget(settingsButton)
         vbox.addWidget(exitButton)
         vbox.addLayout(vbox)
         vbox.addStretch()

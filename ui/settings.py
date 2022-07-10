@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QPushButton, QComboBox, QSlider
+from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QPushButton, QComboBox, QSlider, QApplication, QMainWindow
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+import sys
 
 class Settings(QWidget):
     def __init__(self):
@@ -11,12 +12,12 @@ class Settings(QWidget):
         self.setWindowTitle("Яркость маски") # заголовок окна
         self.resize(200, 200) # размер окна
         self.lbl = QLabel('Яркость маски', self)
-        self.lbl.move(555,45)
+        self.lbl.move(555,55)
 
         self.setWindowTitle("Цвет маски") # заголовок окна
         self.resize(200, 200) # размер окна
         self.lbl = QLabel('Цвет маски', self)
-        self.lbl.move(555,100)
+        self.lbl.move(555,107)
         
          
         # cb = QCheckBox('Телеметрия', self)
@@ -44,25 +45,25 @@ class Settings(QWidget):
         win.moveCenter(pos)
 
         self.move(win.topLeft())
-        pixmap = QPixmap('images/error--v1.png').scaled(30,30)
+        pixmap = QPixmap('ui/images/error--v1.png').scaled(30,30)
         label = QLabel(self)
         label.setPixmap(pixmap)
         label.move(250,45)
         label.resize(pixmap.width(), pixmap.height())
 
-        pixmap = QPixmap('images/summer.png').scaled(35,35)
+        pixmap = QPixmap('ui/images/summer.png').scaled(35,35)
         label2 = QLabel(self)
         label2.setPixmap(pixmap)
         label2.move(520,45)
         label2.resize(pixmap.width(), pixmap.height())
 
-        pixmap = QPixmap('images/high-volume--v1 (1).png').scaled(30,30)
+        pixmap = QPixmap('ui/images/high-volume--v1 (1).png').scaled(30,30)
         label3 = QLabel(self)
         label3.setPixmap(pixmap)
         label3.move(253,100)
         label3.resize(pixmap.width(), pixmap.height())
 
-        pixmap = QPixmap('images/wet.png').scaled(30,30)
+        pixmap = QPixmap('ui/images/wet.png').scaled(30,30)
         label = QLabel(self)
         label.setPixmap(pixmap)
         label.move(522,100)
@@ -103,3 +104,15 @@ class Settings(QWidget):
 
     def cancel_click(self):
         pass
+
+    
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = QMainWindow()
+    
+    start = Settings()
+
+    win.setCentralWidget(start)
+    win.show()
+
+    sys.exit(app.exec_())
