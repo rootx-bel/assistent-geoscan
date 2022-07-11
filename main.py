@@ -37,12 +37,16 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.real_w)
         self.real_w.display.th.start()
         
+        
+        
     def set_menu(self):
         self.stacked_widget.setCurrentWidget(self.start_buttons)
         
-    def set_settings(self):
-        self.stacked_widget.setCurrentWidget(self.setts)
-        
+    # def set_settings(self):
+    #     self.stacked_widget.setCurrentWidget(self.setts)
+    #     self.setts.button_ok.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.real_w))
+
+    #     self.setts.button_cancel.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.real_w))
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)
