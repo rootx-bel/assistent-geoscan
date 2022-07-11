@@ -6,6 +6,7 @@ import sys
 class Settings(QWidget):
     def __init__(self, exit_func):
         self.result = {}
+        self.__exit_func = exit_func
 
         super().__init__()
         
@@ -74,7 +75,7 @@ class Settings(QWidget):
         self.button_ok.move(680,460) 
 
         self.button_cancel = QPushButton("Отмена", self)
-        self.button_cancel.clicked.connect(exit_func)
+        self.button_cancel.clicked.connect(self.__exit_func)
         self.button_cancel.move(575,460)
 
         self.combobox = QComboBox(self)
@@ -102,6 +103,7 @@ class Settings(QWidget):
         self.result['color'] = self.combobox.currentText()
         self.result['light'] = self.my_slider.value()
         print(self.result)
+        self.__exit_func()
     
     def get_result(self):
         return self.result
