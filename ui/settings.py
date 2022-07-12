@@ -89,6 +89,8 @@ class Settings(QWidget):
 
         self.my_slider = QSlider(Qt.Horizontal, self)
         self.my_slider.setValue(50)
+        self.my_slider.setMaximum(100)
+        self.my_slider.setMinimum(0)
         self.my_slider.setGeometry(15, 20, 100, 15)
         self.my_slider.move(650,55)
 
@@ -102,7 +104,7 @@ class Settings(QWidget):
         self.result['sound'] = self.cb2.isChecked()
         self.result['color'] = self.combobox.currentText()
         self.result['light'] = self.my_slider.value()
-        print(self.result)
+        #print(self.result)
         self.__exit_func()
     
     def get_result(self):

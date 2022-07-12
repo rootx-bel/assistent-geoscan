@@ -22,7 +22,7 @@ class Thread(QtCore.QThread):
             ret, frame = cap.read()
             if ret:
                 img = self.fp.get_segmentation(frame)
-                rgb_image = img
+                rgb_image = img[0]
                 #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 #rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 convertToQtFormat = QtGui.QImage(rgb_image.data, rgb_image.shape[1], rgb_image.shape[0], QtGui.QImage.Format_BGR888)

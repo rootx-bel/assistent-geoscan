@@ -56,8 +56,8 @@ class FrameProcessor():
         self.model.eval()
         self.width = 640
         self.height = 480
-        self.color = Color.YELLOW
-        self.light = 50  * 1 / 100
+        self.color = Color.RED
+        self.light = 50 * 0.01
         self.transform = T.Compose([
                 T.ToTensor(),
                 T.Normalize(mean=[0.485, 0.456, 0.406],
@@ -66,43 +66,46 @@ class FrameProcessor():
 
     def get_segmentation(self, img):
         #обработка
-        with torch.no_grad():
-            self.model.eval()
-            img = cv2.resize(img, (self.width, self.height))
-            img_orig = img
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            img = self.transform(img).unsqueeze(0)
-            img.to(self.device)
-            outputs = self.model(img)
-            preds = outputs.max(1)[1].detach().cpu().numpy()
-            colorized_preds = self.cmap[preds].astype('uint8')
-            colorized_preds = Image.fromarray(colorized_preds[0])
-            open_cv_image = np.array(colorized_preds)
-            open_cv_image = cv2.resize(open_cv_image, (self.width, self.height))
-            for i in range(len(open_cv_image)):
-                for j in range(len(open_cv_image[0])):
-                    pix = open_cv_image[i][j]
-                    if pix[0] == 128 and pix[1] == 0 and pix[2] == 0:
-                        if self.color == Color.RED:
-                            open_cv_image[i][j] = [255, 0, 0]
-                        elif self.color == Color.YELLOW:
-                            open_cv_image[i][j] = [255, 255, 0]
-                        elif self.color == Color.BLUE:
-                            open_cv_image[i][j] = [0, 0, 255]
-                        elif self.color == Color.WHITE:
-                            open_cv_image[i][j] = [255, 255, 255]
-                        elif self.color == Color.ORANGE:
-                            open_cv_image[i][j] = [255, 128, 0]
-                        elif self.color == Color.GREEN:
-                            open_cv_image[i][j] = [0, 255, 0]
-            open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
-            open_cv_image = cv2.addWeighted(img_orig, 0.8, open_cv_image, self.light, 0.0)
-            open_cv_image = np.array(open_cv_image)
-        return open_cv_image
+        # with torch.no_grad():
+        #     self.model.eval()
+        #     img = cv2.resize(img, (self.width, self.height))
+        #     img_orig = img
+        #     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        #     img = self.transform(img).unsqueeze(0)
+        #     img.to(self.device)
+        #     outputs = self.model(img)
+        #     preds = outputs.max(1)[1].detach().cpu().numpy()
+        #     colorized_preds = self.cmap[preds].astype('uint8')
+        #     colorized_preds = Image.fromarray(colorized_preds[0])
+        #     open_cv_image = np.array(colorized_preds)
+        #     open_cv_image = cv2.resize(open_cv_image, (self.width, self.height))
+        #     detect = False
+        #     for i in range(len(open_cv_image)):
+        #         for j in range(len(open_cv_image[0])):
+        #             pix = open_cv_image[i][j]
+        #             if pix[0] == 128 and pix[1] == 0 and pix[2] == 0:
+        #                 detect = True
+        #                 if self.color == Color.RED:
+        #                     open_cv_image[i][j] = [255, 0, 0]
+        #                 elif self.color == Color.YELLOW:
+        #                     open_cv_image[i][j] = [255, 255, 0]
+        #                 elif self.color == Color.BLUE:
+        #                     open_cv_image[i][j] = [0, 0, 255]
+        #                 elif self.color == Color.WHITE:
+        #                     open_cv_image[i][j] = [255, 255, 255]
+        #                 elif self.color == Color.ORANGE:
+        #                     open_cv_image[i][j] = [255, 128, 0]
+        #                 elif self.color == Color.GREEN:
+        #                     open_cv_image[i][j] = [0, 255, 0]
+        #     open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
+        #     open_cv_image = cv2.addWeighted(img_orig, 0.8, open_cv_image, self.light, 0.0)
+        #     open_cv_image = np.array(open_cv_image)
+        # return [open_cv_image, detect]
+        return [img, True]
 
     def set_settings(self, params):
         #Настройки; В параметры приходит словарь: color, light
         self.color = Color(params['color'])
         self.light = params['light']
-        self.light = self.light * 1 / 100
+        self.light = self.light * 0.01
         return 0
