@@ -46,23 +46,23 @@ class FrameProcessor():
     cmap = voc_cmap()
 
     def __init__(self):
-        self.model = network.modeling.__dict__["deeplabv3plus_mobilenet"](num_classes=21, output_stride=16)
-        set_bn_momentum(self.model.backbone, momentum=0.01)
-        checkpoint = torch.load("back/models/modell.pth", map_location=torch.device('cpu'))
-        self.model.load_state_dict(checkpoint["model_state"])
-        self.model = nn.DataParallel(self.model)
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.model.to(self.device)
-        self.model.eval()
+        # self.model = network.modeling.__dict__["deeplabv3plus_mobilenet"](num_classes=21, output_stride=16)
+        # set_bn_momentum(self.model.backbone, momentum=0.01)
+        # checkpoint = torch.load("back/models/modell.pth", map_location=torch.device('cpu'))
+        # self.model.load_state_dict(checkpoint["model_state"])
+        # self.model = nn.DataParallel(self.model)
+        # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # self.model.to(self.device)
+        # self.model.eval()
         self.width = 640
         self.height = 480
         self.color = Color.RED
         self.light = 50 * 0.01
-        self.transform = T.Compose([
-                T.ToTensor(),
-                T.Normalize(mean=[0.485, 0.456, 0.406],
-                                std=[0.229, 0.224, 0.225]),
-            ])
+        # self.transform = T.Compose([
+        #         T.ToTensor(),
+        #         T.Normalize(mean=[0.485, 0.456, 0.406],
+        #                         std=[0.229, 0.224, 0.225]),
+        #     ])
 
     def get_segmentation(self, img):
         #обработка
