@@ -4,6 +4,9 @@ from torchvision import models
 from enum import Enum
 import numpy as np
 from PIL import Image
+from torchvision import transforms as T
+import back.network as network
+import torch.nn as nn
 
 class Color(Enum):
     RED = 'Красный'
@@ -33,27 +36,48 @@ def voc_cmap(N=256, normalized=False):
     cmap = cmap/255 if normalized else cmap
     return cmap
 
+def set_bn_momentum(model, momentum=0.1):
+    for m in model.modules():
+        if isinstance(m, nn.BatchNorm2d):
+            m.momentum = momentum
+
 class FrameProcessor():
     
     cmap = voc_cmap()
 
     def __init__(self):
-        self.model.load_state_dict(torch.load("/models/model.pth"))['model_state']
-        self.color = Color.YELLOW
-        self.light = 0
+        self.model = network.modeling.__dict__["deeplabv3plus_mobilenet"](num_classes=21, output_stride=16)
+        set_bn_momentum(self.model.backbone, momentum=0.01)
+        checkpoint = torch.load("back/models/model.pth", map_location=torch.device('cpu'))
+        self.model.load_state_dict(checkpoint["model_state"])
+        self.model = nn.DataParallel(self.model)
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
         self.model.eval()
         self.width = 640
         self.height = 480
+        self.color = Color.YELLOW
+        self.light = 0
+        self.transform = T.Compose([
+                T.ToTensor(),
+                T.Normalize(mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225]),
+            ])
 
     def get_segmentation(self, img):
         #обработка
-        img = cv2.resize(img, (self.width, self.height))
-        outputs = self.model(img)
-        preds = outputs.max(1)[1].detach().cpu().numpy()
-        colorized_preds = self.cmap[preds].astype('uint8')
-        colorized_preds = Image.fromarray(colorized_preds[0])
-        return img
+        with torch.no_grad():
+            self.model.eval()
+            img = cv2.resize(img, (self.width, self.height))
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            img = self.transform(img).unsqueeze(0)
+            img.to(self.device)
+            outputs = self.model(img)
+            preds = outputs.max(1)[1].detach().cpu().numpy()
+            colorized_preds = self.cmap[preds].astype('uint8')
+            colorized_preds = Image.fromarray(colorized_preds[0])
+            open_cv_image = np.array(colorized_preds)
+        return open_cv_image
 
     def set_settings(self, params):
         #Настройки; В параметры приходит словарь: color, light

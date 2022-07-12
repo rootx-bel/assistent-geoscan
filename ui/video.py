@@ -23,8 +23,8 @@ class Thread(QtCore.QThread):
             if ret:
                 img = fp.get_segmentation(frame)
                 #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                # rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                convertToQtFormat = QtGui.QImage(img.data, img.shape[1], img.shape[0], QtGui.QImage.Format_BGR888)
+                rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                convertToQtFormat = QtGui.QImage(rgb_image.data, rgb_image.shape[1], rgb_image.shape[0], QtGui.QImage.Format_BGR888)
                 p = convertToQtFormat.scaled(self.scaled_size, QtCore.Qt.KeepAspectRatio)
                 self.change_pixmap.emit(p)
 
