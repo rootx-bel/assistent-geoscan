@@ -13,17 +13,18 @@ except:
 class Thread(QtCore.QThread):
     change_pixmap = QtCore.pyqtSignal(QtGui.QImage)
     scaled_size = QtCore.QSize(width, height)
-    
+    fp = FrameProcessor()
     
     def run(self):
-        fp = FrameProcessor()
+        
         cap = cv2.VideoCapture(0)
         while True:
             ret, frame = cap.read()
             if ret:
-                img = fp.get_segmentation(frame)
+                img = self.fp.get_segmentation(frame)
+                rgb_image = img
                 #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                #rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 convertToQtFormat = QtGui.QImage(rgb_image.data, rgb_image.shape[1], rgb_image.shape[0], QtGui.QImage.Format_BGR888)
                 p = convertToQtFormat.scaled(self.scaled_size, QtCore.Qt.KeepAspectRatio)
                 self.change_pixmap.emit(p)
@@ -65,7 +66,6 @@ class RealWidget(QtWidgets.QWidget):
     def __init__(self):
         super(RealWidget, self).__init__()
         self.setWindowTitle('Visual Assistant')
-        self.settings = Settings(lambda: print('kek'))
 
         # Initialize tab screen
         self.tabs = QtWidgets.QTabWidget()
@@ -80,6 +80,7 @@ class RealWidget(QtWidgets.QWidget):
         self.createGridLayout()
         self.tab1.layout = QtWidgets.QVBoxLayout()
         self.display = PlayStreaming()
+        self.settings = Settings(lambda: self.display.th.fp.set_settings(self.settings.get_result()))
         self.tab1.layout.addWidget(self.display, stretch=1)
         # self.tab1.layout.addWidget(self.horizontalGroupBox)
         self.tab1.setLayout(self.tab1.layout)
