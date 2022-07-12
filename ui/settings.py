@@ -10,9 +10,9 @@ class Settings(QWidget):
 
         super().__init__()
         
-        self.setWindowTitle("Яркость маски") # заголовок окна
+        self.setWindowTitle("Прозрачность маски") # заголовок окна
         self.resize(200, 200) # размер окна
-        self.lbl = QLabel('Яркость маски', self)
+        self.lbl = QLabel('Прозрачность маски', self)
         self.lbl.move(555,55)
 
         self.setWindowTitle("Цвет маски") # заголовок окна
