@@ -65,7 +65,7 @@ class RealWidget(QtWidgets.QWidget):
     def __init__(self):
         super(RealWidget, self).__init__()
         self.setWindowTitle('Visual Assistant')
-        self.settings = Settings(lambda: self.stacked_widget.setCurrentWidget(real_w))
+        self.settings = Settings(lambda: print('kek'))
 
         # Initialize tab screen
         self.tabs = QtWidgets.QTabWidget()
