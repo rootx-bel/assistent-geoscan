@@ -48,7 +48,7 @@ class FrameProcessor():
     def __init__(self):
         # self.model = network.modeling.__dict__["deeplabv3plus_mobilenet"](num_classes=21, output_stride=16)
         # set_bn_momentum(self.model.backbone, momentum=0.01)
-        # checkpoint = torch.load("back/models/modell.pth", map_location=torch.device('cpu'))
+        # checkpoint = torch.load("back/models/modelling.pth", map_location=torch.device('cpu'))
         # self.model.load_state_dict(checkpoint["model_state"])
         # self.model = nn.DataParallel(self.model)
         # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
