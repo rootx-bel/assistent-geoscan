@@ -21,7 +21,7 @@ class Window(QMainWindow):
         super().__init__()
   
         # setting title
-        self.setWindowTitle("xer ego znaet ")
+        self.setWindowTitle("lkjhgfds")
   
         # setting geometry
         self.setGeometry(100, 100, 600, 400)
