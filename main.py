@@ -22,10 +22,10 @@ class MainWidget(QWidget):
         self.home_widget = HomeWidget(self)
         self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
         self.settings_widget = Settings(lambda: self.stacked_widget.setCurrentWidget(self.home_widget))
-        self.real_w = RealWidget()
+        self.real_widget = RealWidget()
         
         self.stacked_widget.addWidget(self.home_widget)
-        self.stacked_widget.addWidget(self.real_w)
+        self.stacked_widget.addWidget(self.real_widget)
         self.stacked_widget.addWidget(self.settings_widget)
         
         self.stacked_widget.setCurrentWidget(self.home_widget)
@@ -37,7 +37,7 @@ class MainWidget(QWidget):
         if value == "load":
             pass
         elif value == "live":
-            self.stacked_widget.setCurrentWidget(self.real_w)
+            self.stacked_widget.setCurrentWidget(self.real_widget)
             self.real_w.display.th.start()
         elif value == "settings":
             self.stacked_widget.setCurrentWidget(self.settings_widget)
