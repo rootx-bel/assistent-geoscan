@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QEvent, pyqtSignal, QObject
 
 class ButtonCommunicate(QObject):
-    menu_click = pyqtSignal()
+    menu_click = pyqtSignal(str)
 
 class Buttons(QWidget):
     def __init__(self, parent=None):
@@ -52,8 +52,7 @@ class Buttons(QWidget):
                 QPixmap(f"ui/images/{object.objectName()}.png"))
             self.stop = False
         elif event.type() == QEvent.MouseButtonPress:
-            print("Clicked")
-            self.buttons_signal.emit()
+            self.buttons_signal.menu_click.emit(object.objectName())
         return False
 
 

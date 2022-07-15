@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import *
 import sys
 from PyQt5.QtGui import *
 from PyQt5 import *
+import PyQt5.QtCore as QtCore
+from PyQt5.QtCore import QCoreApplication
 from ui.video import RealWidget
 from ui.settings import Settings
 from ui.home import HomeWidget
@@ -18,7 +20,8 @@ class MainWidget(QWidget):
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         self.home_widget = HomeWidget(self)
-        self.settings_widget = Settings(self.set_menu)
+        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.exit_click)
+        self.settings_widget = Settings(lambda: self.stacked_widget.setCurrentWidget(self.home_widget))
         self.real_w = RealWidget()
         
         self.stacked_widget.addWidget(self.home_widget)
@@ -30,17 +33,17 @@ class MainWidget(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 
-    def exit_click(self):
-        sender = self.sender()
-        print(sender.text)
-        # self.QCoreApplication.instance().quit
-        
-    def set_live(self):
-        self.stacked_widget.setCurrentWidget(self.real_w)
-        self.real_w.display.th.start()
-        
-    def set_menu(self):
-        self.stacked_widget.setCurrentWidget(self.home_widget)
+    @QtCore.pyqtSlot(str)
+    def exit_click(self, value):
+        if value == "load":
+            pass
+        elif value == "live":
+            self.stacked_widget.setCurrentWidget(self.real_w)
+            self.real_w.display.th.start()
+        elif value == "settings":
+            self.stacked_widget.setCurrentWidget(self.settings_widget)
+        elif value == "exit":
+            QCoreApplication.instance().quit()
 
 class MainWindow(QMainWindow): 
     def __init__(self, parent=None):
