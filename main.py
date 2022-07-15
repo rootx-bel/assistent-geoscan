@@ -20,7 +20,7 @@ class MainWidget(QWidget):
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         self.home_widget = HomeWidget(self)
-        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.exit_click)
+        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
         self.settings_widget = Settings(lambda: self.stacked_widget.setCurrentWidget(self.home_widget))
         self.real_w = RealWidget()
         
@@ -33,8 +33,7 @@ class MainWidget(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 
-    @QtCore.pyqtSlot(str)
-    def exit_click(self, value):
+    def buttons_click(self, value):
         if value == "load":
             pass
         elif value == "live":
