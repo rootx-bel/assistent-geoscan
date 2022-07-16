@@ -1,9 +1,8 @@
 import cv2
 from back.video import FrameProcessor
-from ui.settings import Settings
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, pyqtSlot, QEvent
+from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, pyqtSlot
 
 try:
     import wx

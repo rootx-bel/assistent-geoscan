@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5 import *
 from PyQt5.QtCore import QCoreApplication
 from ui.live import LiveWidget
-from ui.settings import Settings
+from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 
@@ -20,8 +20,7 @@ class MainWidget(QWidget):
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         self.home_widget = HomeWidget(self)
-        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
-        self.settings_widget = Settings(self.return_home)
+        self.settings_widget = SettingsWidget(self.return_home)
         self.real_widget = LiveWidget(self)
         self.overlay = Overlay(self)
         self.overlay.hide()
@@ -34,8 +33,17 @@ class MainWidget(QWidget):
 
         self.stacked_widget.stackUnder(self.overlay)
 
+        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
+        self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
+        self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
+        self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.update_settings)
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
+
+    def update_settings(self, value):
+        name = self.sender().objectName()
+        self.settings_widget.result[name] = value
 
     def return_home(self):
         self.stacked_widget.setCurrentWidget(self.home_widget)
@@ -53,9 +61,13 @@ class MainWidget(QWidget):
             self.stacked_widget.setCurrentWidget(self.settings_widget)
         elif value == "exit":
             QCoreApplication.instance().quit()
+        elif value == "home":
+            self.stacked_widget.setCurrentWidget(self.home_widget)
+            self.overlay.hide()
 
     def resizeEvent(self, event):
-        self.overlay.setGeometry(0, 0, self.frameGeometry().width(), self.overlay.frameGeometry().height())
+        self.overlay.resizeEvent(event)
+        return super().resizeEvent(event)
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
