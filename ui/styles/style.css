@@ -1,13 +1,14 @@
 #main { 
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
 }
-/* 
-#settings {
+
+#settings-widget {
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
-} */
+}
 
 #setts {
-    background-color: aqua;
+    background-color: rgba(150,150,150,50);
+    border-radius: 20%;
 }
 
 /* #load-button {

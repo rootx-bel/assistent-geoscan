@@ -1,50 +1,57 @@
 from ctypes import alignment
-from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QPushButton, QComboBox, QSlider, QApplication, QMainWindow, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QVBoxLayout, QPushButton, QComboBox, QSlider, QApplication, QMainWindow, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QResizeEvent
 from PyQt5.QtCore import Qt
 import sys
 
 
 class Settings(QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.result = {}
-        self.setGeometry(0,0,1600,800)
 
         self.label = QLabel(self)
         self.label.setObjectName("setts")
-        self.label.setMinimumSize(1600,800)
-
 
         self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
+
+        # self.layout.addWidget()
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.label.resize(self.size())
         return super().resizeEvent(a0)
 
+
 class SettingsWidget(QWidget):
-    def __init__(self, exit_func = None):
+    def __init__(self, exit_func=None):
         super().__init__()
         self.result = {}
 
         self.label = QLabel(self)
-        self.label.setObjectName("settings")
+        self.label.setObjectName("settings-widget")
 
-        self.layout = QHBoxLayout(self)
+        self.layout = QVBoxLayout(self)
+        self.hbox = QHBoxLayout(self)
 
         self.line = QLabel()
         self.line.setPixmap(QPixmap("ui/images/line.png"))
-        self.layout.addWidget(self.line, alignment=Qt.AlignCenter)
+        self.hbox.addWidget(self.line, 1, alignment=Qt.AlignCenter)
 
         self.setts = Settings(self)
-        self.layout.addWidget(self.setts, 0)
-        self.setts.resize(1600,800)
+        self.hbox.addWidget(self.setts, 3)
 
         self.line2 = QLabel()
         self.line2.setPixmap(QPixmap("ui/images/line.png"))
-        self.layout.addWidget(self.line2, alignment=Qt.AlignCenter)
-        
+        self.hbox.addWidget(self.line2, 1, alignment=Qt.AlignCenter)
+
+        self.layout.addStretch(1)
+        self.layout.addLayout(self.hbox)
+        self.layout.addStretch(1)
+
+        # self.hbox.setStretch(1, 3)
+        self.setLayout(self.layout)
+
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.label.resize(self.size())
         return super().resizeEvent(a0)
@@ -56,7 +63,7 @@ class SettingsWidget(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = QMainWindow()
-    
+
     with open("ui/styles/style.css", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
