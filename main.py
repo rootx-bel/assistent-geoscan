@@ -20,13 +20,13 @@ class MainWidget(QWidget):
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         self.home_widget = HomeWidget(self)
-        self.settings_widget = SettingsWidget(self.return_home)
-        self.real_widget = LiveWidget(self)
+        self.settings_widget = SettingsWidget()
+        self.live_widget = LiveWidget(self)
         self.overlay = Overlay(self)
         self.overlay.hide()
 
         self.stacked_widget.addWidget(self.home_widget)
-        self.stacked_widget.addWidget(self.real_widget)
+        self.stacked_widget.addWidget(self.live_widget)
         self.stacked_widget.addWidget(self.settings_widget)
 
         self.stacked_widget.setCurrentWidget(self.home_widget)
@@ -45,25 +45,34 @@ class MainWidget(QWidget):
         name = self.sender().objectName()
         self.settings_widget.result[name] = value
 
-    def return_home(self):
+    def open_home(self):
+        if self.stacked_widget.currentWidget() is self.live_widget:
+            self.live_widget.set_video_thread(False)
         self.stacked_widget.setCurrentWidget(self.home_widget)
         self.overlay.hide()
+        self.overlay.top_lay.change_home_button('home')
+
+    def open_live(self):
+        self.overlay.show()
+        self.stacked_widget.setCurrentWidget(self.live_widget)
+        self.overlay.top_lay.change_home_button('home')
+        self.live_widget.set_video_thread(True)
 
     def buttons_click(self, value):
         if value == "load":
             pass
-        elif value == "live":
-            self.overlay.show()
-            self.stacked_widget.setCurrentWidget(self.real_widget)
-            self.real_widget.display.th.start()
+        elif value == "live" or value == "back":
+            self.open_live()
         elif value == "settings":
-            self.overlay.hide()
+            self.overlay.show()
+            self.overlay.set_visible_settings(False)
+            if self.stacked_widget.currentWidget() is self.live_widget:
+                self.overlay.top_lay.change_home_button('back')
             self.stacked_widget.setCurrentWidget(self.settings_widget)
         elif value == "exit":
             QCoreApplication.instance().quit()
         elif value == "home":
-            self.stacked_widget.setCurrentWidget(self.home_widget)
-            self.overlay.hide()
+            self.open_home()
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)
@@ -77,7 +86,7 @@ class MainWindow(QMainWindow):
 
     def setupUi(self):
         self.setContentsMargins(0, 0, 0, 0)
-        self.setWindowTitle("MainInterface")
+        self.setWindowTitle("Assistent")
 
         self.mainWidget = MainWidget()
         self.setCentralWidget(self.mainWidget)

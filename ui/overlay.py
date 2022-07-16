@@ -1,9 +1,7 @@
-import sys
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, 
-QHBoxLayout, QAbstractButton, QLabel,  QSlider)
+QHBoxLayout, QLabel,  QSlider)
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPixmap, QMouseEvent
-# from ui.settings import Settings
+from PyQt5.QtGui import QPixmap, QMouseEvent
 
 class TopBarButton(QLabel):
     clicked = pyqtSignal(str)
@@ -35,8 +33,6 @@ class BottomBarButton(QLabel):
         return super().mousePressEvent(ev)
 
 class BottomSlider(QWidget):
-    # valueChanged = pyqtSignal(str, int)
-
     def __init__(self, name, pix1, pix2, parent = None):
         super().__init__(parent)
         self.left_lay = QHBoxLayout(self)
@@ -49,7 +45,6 @@ class BottomSlider(QWidget):
         self.slider.setMaximum(100)
         self.slider.setValue(self.sv)
         self.slider.setObjectName(name)
-        # self.slider.valueChanged.connect(lambda: self.valueChanged.emit(self.objectName(), self.slider.value()))
 
         self.pic_button.clicked.connect(self.click_handle)
         self.slider.setStyleSheet("background-color :rgba(211, 211, 211, 0)")
@@ -92,10 +87,16 @@ class HorizontalTopLay(QWidget):
         self.top_layout.addWidget(self.setting_button, alignment = Qt. AlignVCenter | Qt.AlignRight)
         self.setLayout(self.top_layout)
 
+    def change_home_button(self, name):
+        self.home_button.setObjectName(name)
+        if name == 'home':
+            self.home_button.setPixmap(QPixmap("ui/images/icons/home.png"))
+        elif name == 'back':
+            self.home_button.setPixmap(QPixmap("ui/images/icons/back.png"))
+
 class Overlay(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('New_Main')
         self.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         self.layout = QVBoxLayout()
         self.top_lay = HorizontalTopLay()
@@ -103,6 +104,16 @@ class Overlay(QWidget):
         self.bottom_lay = HorizontalBottomLay()
         self.layout.addWidget(self.bottom_lay, alignment=Qt.AlignBottom)
         self.setLayout(self.layout)
+
+    def set_visible_settings(self, visible=True):
+        if visible:
+            self.top_lay.setting_button.show()
+        else:
+            self.top_lay.setting_button.hide()
+
+    def show(self):
+        self.set_visible_settings(True)
+        super().show()
 
     def resizeEvent(self, event):
         self.setGeometry(self.parent().frameGeometry())

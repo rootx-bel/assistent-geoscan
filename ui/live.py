@@ -17,9 +17,13 @@ class Thread(QThread):
     scaled_size = QSize(width, height)
     fp = FrameProcessor()
 
+    def __init__(self, parent=None):
+        self.__run = True
+        super().__init__(parent)
+
     def run(self):
         cap = cv2.VideoCapture(0)
-        while True:
+        while self.__run:
             ret, frame = cap.read()
             if ret:
                 img, is_detected = self.fp.get_segmentation(frame)
@@ -32,6 +36,13 @@ class Thread(QThread):
     def scaled(self, scaled_size):
         self.scaled_size = scaled_size
 
+    def quit(self):
+        self.__run = False
+        super().quit()
+
+    def start(self):
+        self.__run = True
+        super().start()
 
 class PlayStreaming(QWidget):
     resize_signal = pyqtSignal(QSize)
@@ -67,9 +78,6 @@ class LiveWidget(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.display = PlayStreaming()
-        # self.settings = Settings(
-        #     lambda: self.display.th.fp.set_settings(self.settings.get_result()))
-
         self.layout.addWidget(
             self.display, alignment=Qt.AlignCenter, stretch=1)
         self.setLayout(self.layout)
@@ -77,3 +85,9 @@ class LiveWidget(QWidget):
     def resizeEvent(self, event):
         self.display.resize_signal.emit(self.size())
         super().resizeEvent(event)
+
+    def set_video_thread(self, status = True):
+        if status:
+            self.display.th.start()
+        else:
+            self.display.th.quit()
