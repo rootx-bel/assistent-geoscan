@@ -45,23 +45,14 @@ class MainWidget(QWidget):
         name = self.sender().objectName()
         self.settings_widget.result[name] = value
 
-    def open_home(self):
-        if self.stacked_widget.currentWidget() is self.live_widget:
-            self.live_widget.set_video_thread(False)
-        self.stacked_widget.setCurrentWidget(self.home_widget)
-        self.overlay.hide()
-
-    def open_live(self):
-        self.overlay.show()
-        self.stacked_widget.setCurrentWidget(self.live_widget)
-        self.overlay.top_lay.change_home_button('home')
-        self.live_widget.set_video_thread(True)
-
     def buttons_click(self, value):
         if value == "load":
             pass
         elif value == "live" or value == "back":
-            self.open_live()
+            self.overlay.show()
+            self.stacked_widget.setCurrentWidget(self.live_widget)
+            self.overlay.top_lay.change_home_button('home')
+            self.live_widget.set_video_thread(True)
         elif value == "settings":
             self.overlay.show()
             self.overlay.set_visible_settings(False)
@@ -71,7 +62,10 @@ class MainWidget(QWidget):
         elif value == "exit":
             QCoreApplication.instance().quit()
         elif value == "home":
-            self.open_home()
+            if self.stacked_widget.currentWidget() is self.live_widget:
+                self.live_widget.set_video_thread(False)
+            self.stacked_widget.setCurrentWidget(self.home_widget)
+            self.overlay.hide()
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)
