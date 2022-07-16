@@ -2,13 +2,11 @@ from PyQt5.QtWidgets import *
 import sys
 from PyQt5.QtGui import *
 from PyQt5 import *
-import PyQt5.QtCore as QtCore
-from PyQt5.QtCore import QCoreApplication, QEvent, Qt
+from PyQt5.QtCore import QCoreApplication
 from ui.live import LiveWidget
 from ui.settings import Settings
 from ui.home import HomeWidget
 from ui.overlay import Overlay
-
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -59,7 +57,6 @@ class MainWidget(QWidget):
     def resizeEvent(self, event):
         self.overlay.setGeometry(0, 0, self.frameGeometry().width(), self.overlay.frameGeometry().height())
 
-
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -72,7 +69,6 @@ class MainWindow(QMainWindow):
 
         self.mainWidget = MainWidget()
         self.setCentralWidget(self.mainWidget)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

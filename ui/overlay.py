@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt
 class Overlay(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.__parent = parent
         self.initUI()
 
     def initUI(self):
@@ -22,5 +21,3 @@ class Overlay(QWidget):
 
         self.layout.addWidget(self.button1, alignment=Qt.AlignLeft | Qt.AlignTop)
         self.layout.addWidget(self.button2, alignment=Qt.AlignRight | Qt.AlignTop)
-
-        # super().resizeEvent(event)
