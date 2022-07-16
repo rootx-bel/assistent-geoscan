@@ -14,9 +14,42 @@ class Settings(QWidget):
         self.label.setObjectName("setts")
 
         self.layout = QHBoxLayout(self)
+        self.layout.setContentsMargins(60, 60, 60, 60)
         self.setLayout(self.layout)
 
-        # self.layout.addWidget()
+        self.vbox = QVBoxLayout(self)
+        self.messages_topic_image = QLabel(self)
+        self.messages_topic_image.setPixmap(QPixmap("ui/images/msgs.png"))
+        self.vbox.addWidget(self.messages_topic_image,
+                            alignment=Qt.AlignLeft | Qt.AlignTop)
+
+        self.msgs_hbox = QHBoxLayout(self)
+
+        self.messages_topic_dots = QLabel(self)
+        self.messages_topic_dots.setPixmap(
+            QPixmap("ui/images/settings-dots.png"))
+        self.msgs_hbox.addStretch(1)
+        self.msgs_hbox.addWidget(
+            self.messages_topic_dots, alignment=Qt.AlignHCenter)
+
+        self.msgs_hbox_vbox = QVBoxLayout()
+        self.messages_visual_button = QLabel(self)
+        self.messages_visual_button.setPixmap(
+            QPixmap("ui/images/msgs-visual-button.png"))
+        self.msgs_hbox_vbox.addWidget(
+            self.messages_visual_button, alignment=Qt.AlignTop)
+        self.msgs_hbox_vbox.setContentsMargins(0, 30, 0, 0)
+
+        self.msgs_hbox.addLayout(self.msgs_hbox_vbox)
+        self.msgs_hbox.addStretch(1)
+        self.vbox.addLayout(self.msgs_hbox)
+        self.vbox.addStretch(5)
+
+        self.layout.addLayout(self.vbox, 1)
+
+        self.line = QLabel()
+        self.line.setPixmap(QPixmap("ui/images/line.png"))
+        self.layout.addWidget(self.line, 1)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.label.resize(self.size())
