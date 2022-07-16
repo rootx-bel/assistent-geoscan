@@ -50,7 +50,6 @@ class MainWidget(QWidget):
             self.live_widget.set_video_thread(False)
         self.stacked_widget.setCurrentWidget(self.home_widget)
         self.overlay.hide()
-        self.overlay.top_lay.change_home_button('home')
 
     def open_live(self):
         self.overlay.show()
