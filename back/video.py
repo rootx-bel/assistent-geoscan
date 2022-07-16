@@ -8,6 +8,7 @@ from torchvision import transforms as T
 import back.network as network
 import torch.nn as nn
 
+
 class Color(Enum):
     RED = 'Красный'
     YELLOW = 'Желтый'
@@ -15,6 +16,7 @@ class Color(Enum):
     WHITE = 'Белый'
     ORANGE = 'Оранжевый'
     GREEN = 'Зеленый'
+
 
 def voc_cmap(N=256, normalized=False):
     def bitget(byteval, idx):
@@ -36,13 +38,15 @@ def voc_cmap(N=256, normalized=False):
     cmap = cmap/255 if normalized else cmap
     return cmap
 
+
 def set_bn_momentum(model, momentum=0.1):
     for m in model.modules():
         if isinstance(m, nn.BatchNorm2d):
             m.momentum = momentum
 
+
 class FrameProcessor():
-    
+
     cmap = voc_cmap()
 
     def __init__(self):
@@ -65,7 +69,7 @@ class FrameProcessor():
         #     ])
 
     def get_segmentation(self, img):
-        #обработка
+        # обработка
         # with torch.no_grad():
         #     self.model.eval()
         #     img = cv2.resize(img, (self.width, self.height))
@@ -97,11 +101,11 @@ class FrameProcessor():
         #     open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
         #     open_cv_image = cv2.addWeighted(img_orig, 0.8, open_cv_image, self.light, 0.0)
         #     open_cv_image = np.array(open_cv_image)
-        # return [open_cv_image, detect]
-        return [img, True]
+        # return (open_cv_image, detect)
+        return (img, True)
 
     def set_settings(self, params):
-        #Настройки; В параметры приходит словарь: color, light
+        # Настройки; В параметры приходит словарь: color, light
         self.color = Color(params['color'])
         self.light = params['light']
         self.light = self.light * 0.01

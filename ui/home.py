@@ -2,8 +2,10 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QEvent, pyqtSignal, QObject
 
+
 class ButtonCommunicate(QObject):
     menu_click = pyqtSignal(str)
+
 
 class Buttons(QWidget):
     def __init__(self, parent=None):

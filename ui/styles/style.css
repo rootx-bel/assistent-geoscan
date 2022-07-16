@@ -2,14 +2,16 @@
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
 }
 
+#lbl {
+    background-color: yellow;
+}
+
 /* #load-button {
     background-color: black;
     border-radius: 0%;
 }
 
-#load-button:hover {
-    background-color: yellow;
-}
+
 
 #dots {
     background-color: green;

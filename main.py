@@ -3,10 +3,11 @@ import sys
 from PyQt5.QtGui import *
 from PyQt5 import *
 import PyQt5.QtCore as QtCore
-from PyQt5.QtCore import QCoreApplication
-from ui.video import RealWidget
+from PyQt5.QtCore import QCoreApplication, QEvent, Qt
+from ui.live import LiveWidget
 from ui.settings import Settings
 from ui.home import HomeWidget
+
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -20,16 +21,18 @@ class MainWidget(QWidget):
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         self.home_widget = HomeWidget(self)
-        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
-        self.settings_widget = Settings(lambda: self.stacked_widget.setCurrentWidget(self.home_widget))
-        self.real_widget = RealWidget()
-        
+        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(
+            self.buttons_click)
+        self.settings_widget = Settings(
+            lambda: self.stacked_widget.setCurrentWidget(self.home_widget))
+        self.real_widget = LiveWidget(self)
+
         self.stacked_widget.addWidget(self.home_widget)
         self.stacked_widget.addWidget(self.real_widget)
         self.stacked_widget.addWidget(self.settings_widget)
-        
+
         self.stacked_widget.setCurrentWidget(self.home_widget)
-        
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 
@@ -38,13 +41,14 @@ class MainWidget(QWidget):
             pass
         elif value == "live":
             self.stacked_widget.setCurrentWidget(self.real_widget)
-            self.real_w.display.th.start()
+            self.real_widget.display.th.start()
         elif value == "settings":
             self.stacked_widget.setCurrentWidget(self.settings_widget)
         elif value == "exit":
             QCoreApplication.instance().quit()
 
-class MainWindow(QMainWindow): 
+
+class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi()
@@ -56,15 +60,16 @@ class MainWindow(QMainWindow):
         self.mainWidget = MainWidget()
         self.setCentralWidget(self.mainWidget)
 
-            
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    with open("ui/style.css", "r") as f:
+    with open("ui/styles/style.css", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 
     win = MainWindow()
     win.resize(1920, 1080)
+    win.setMinimumSize(1920, 1080)
     win.show()
     sys.exit(app.exec_())
