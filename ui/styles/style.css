@@ -1,10 +1,10 @@
 #main { 
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
 }
-
+/* 
 #settings {
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
-}
+} */
 
 #setts {
     background-color: aqua;
