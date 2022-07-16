@@ -2,8 +2,12 @@
     border-image: url('ui/images/start-bg.png') 0 0 0 0;
 }
 
-#lbl {
-    background-color: yellow;
+#settings {
+    border-image: url('ui/images/start-bg.png') 0 0 0 0;
+}
+
+#setts {
+    background-color: aqua;
 }
 
 /* #load-button {
