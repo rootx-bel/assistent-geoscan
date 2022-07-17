@@ -1,14 +1,33 @@
-#main { 
-    border-image: url('ui/images/start-bg.png') 0 0 0 0;
+#main {
+  border-image: url("ui/images/start-bg.png") 0 0 0 0;
 }
 
-#settings-widget {
-    border-image: url('ui/images/start-bg.png') 0 0 0 0;
+#settings__widget {
+  border-image: url("ui/images/start-bg.png") 0 0 0 0;
 }
 
-#setts {
-    background-color: rgba(150,150,150,50);
-    border-radius: 20%;
+#settings__panel {
+  background-color: rgba(150, 150, 150, 50);
+  border-radius: 20%;
+}
+
+#cp {
+  border-color: green;
+}
+
+QSlider::groove:horizontal {
+  background: rgba(255, 255, 255, 100);
+  height: 5px;
+  border-radius: 2px;
+}
+
+QSlider::handle:horizontal {
+  background: rgba(255, 255, 255, 255);
+  border: 0px transparent;
+  width: 16px;
+  margin-top: -6px;
+  margin-bottom: -6px;
+  border-radius: 8px;
 }
 
 /* #load-button {

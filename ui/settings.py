@@ -1,17 +1,69 @@
-from ctypes import alignment
+from tkinter import E
 from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QVBoxLayout, QPushButton, QComboBox, QSlider, QApplication, QMainWindow, QHBoxLayout
-from PyQt5.QtGui import QPixmap, QResizeEvent
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal, QObject
 import sys
+from ui.ColorPicker.picker import ColorPicker
 
 
-class Settings(QWidget):
+class FourStateButton(QLabel):
+    hovered = pyqtSignal(bool)
+    clicked = pyqtSignal(bool)
+
+    is_checked = False
+    is_entered = False
+
+    image = None
+    image_hover = None
+    image_checked = None
+    image_checked_hover = None
+
+    def __init__(self, parent: QObject = None):
+        super().__init__(parent)
+
+    def setImage(self, image):
+        self.image = image
+        self.setPixmap(self.image)
+
+    def setChecked(self, state: bool) -> None:
+        if state:
+            if self.is_entered:
+                self.pixmap = self.image_checked_hover
+            else:
+                self.pixmap = self.image_checked
+        else:
+            if self.is_entered:
+                self.pixmap = self.image_hover
+            else:
+                self.pixmap = self.image
+        self.setPixmap(self.pixmap)
+        self.is_checked = state
+
+    def enterEvent(self, a0: QEvent) -> None:
+        self.is_entered = True
+        self.hovered.emit(self.is_checked)
+        self.setChecked(self.is_checked)
+        return super().enterEvent(a0)
+
+    def leaveEvent(self, a0: QEvent) -> None:
+        self.is_entered = False
+        self.setChecked(self.is_checked)
+        return super().leaveEvent(a0)
+
+    def mousePressEvent(self, ev: QMouseEvent) -> None:
+        self.setChecked(not self.is_checked)
+        self.clicked.emit(self.is_checked)
+        return super().mousePressEvent(ev)
+
+
+class SettingsPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.result = {}
+        btn = QPushButton()
 
         self.label = QLabel(self)
-        self.label.setObjectName("setts")
+        self.label.setObjectName("settings__panel")
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(60, 60, 60, 60)
@@ -19,7 +71,8 @@ class Settings(QWidget):
 
         self.vbox = QVBoxLayout(self)
         self.messages_topic_image = QLabel(self)
-        self.messages_topic_image.setPixmap(QPixmap("ui/images/msgs.png"))
+        self.messages_topic_image.setPixmap(
+            QPixmap("ui/images/settings/messages/topic.png"))
         self.vbox.addWidget(self.messages_topic_image,
                             alignment=Qt.AlignLeft | Qt.AlignTop)
 
@@ -27,17 +80,36 @@ class Settings(QWidget):
 
         self.messages_topic_dots = QLabel(self)
         self.messages_topic_dots.setPixmap(
-            QPixmap("ui/images/settings-dots.png"))
+            QPixmap("ui/images/settings/messages/dots.png"))
         self.msgs_hbox.addStretch(1)
         self.msgs_hbox.addWidget(
             self.messages_topic_dots, alignment=Qt.AlignHCenter)
 
         self.msgs_hbox_vbox = QVBoxLayout()
-        self.messages_visual_button = QLabel(self)
-        self.messages_visual_button.setPixmap(
-            QPixmap("ui/images/msgs-visual-button.png"))
+        self.messages_visual_button = FourStateButton(self)
+        self.messages_visual_button.setImage(
+            QPixmap("ui/images/settings/messages/visual/off.png"))
+        self.messages_visual_button.image_hover = QPixmap(
+            "ui/images/settings/messages/visual/off-hover.png")
+        self.messages_visual_button.image_checked = QPixmap(
+            "ui/images/settings/messages/visual/on.png")
+        self.messages_visual_button.image_checked_hover = QPixmap(
+            "ui/images/settings/messages/visual/on-hover.png")
         self.msgs_hbox_vbox.addWidget(
             self.messages_visual_button, alignment=Qt.AlignTop)
+
+        self.messages_sound_button = FourStateButton(self)
+        self.messages_sound_button.setImage(
+            QPixmap("ui/images/settings/messages/sound/off.png"))
+        self.messages_sound_button.image_hover = QPixmap(
+            "ui/images/settings/messages/sound/off-hover.png")
+        self.messages_sound_button.image_checked = QPixmap(
+            "ui/images/settings/messages/sound/on.png")
+        self.messages_sound_button.image_checked_hover = QPixmap(
+            "ui/images/settings/messages/sound/on-hover.png")
+        self.msgs_hbox_vbox.addWidget(
+            self.messages_sound_button, alignment=Qt.AlignTop)
+
         self.msgs_hbox_vbox.setContentsMargins(0, 30, 0, 0)
 
         self.msgs_hbox.addLayout(self.msgs_hbox_vbox)
@@ -45,11 +117,15 @@ class Settings(QWidget):
         self.vbox.addLayout(self.msgs_hbox)
         self.vbox.addStretch(5)
 
-        self.layout.addLayout(self.vbox, 1)
+        self.layout.addLayout(self.vbox)
 
         self.line = QLabel()
         self.line.setPixmap(QPixmap("ui/images/line.png"))
-        self.layout.addWidget(self.line, 1)
+        self.layout.addWidget(self.line)
+
+        self.colorPicker = ColorPicker(width=300, startupcolor=[0, 255, 255])
+        self.colorPicker.setObjectName("cp")
+        self.layout.addWidget(self.colorPicker)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.label.resize(self.size())
@@ -61,32 +137,38 @@ class SettingsWidget(QWidget):
         super().__init__()
         self.result = {}
 
-        self.label = QLabel(self)
-        self.label.setObjectName("settings-widget")
+        self.background = QLabel(self)
+        self.background.setObjectName("settings__widget")
 
-        self.layout = QVBoxLayout(self)
-        self.hbox = QHBoxLayout(self)
+        self.main_vbox = QVBoxLayout(self)
 
-        self.line = QLabel()
-        self.line.setPixmap(QPixmap("ui/images/line.png"))
-        self.hbox.addWidget(self.line, 1, alignment=Qt.AlignCenter)
+        self.settings_panel_hbox = QHBoxLayout(self)
 
-        self.setts = Settings(self)
-        self.hbox.addWidget(self.setts, 3)
+        self.settings_panel_hbox.addStretch(1)
 
-        self.line2 = QLabel()
-        self.line2.setPixmap(QPixmap("ui/images/line.png"))
-        self.hbox.addWidget(self.line2, 1, alignment=Qt.AlignCenter)
+        self.line_left = QLabel()
+        self.line_left.setPixmap(QPixmap("ui/images/line.png"))
+        self.settings_panel_hbox.addWidget(
+            self.line_left, 1, alignment=Qt.AlignCenter)
 
-        self.layout.addStretch(1)
-        self.layout.addLayout(self.hbox)
-        self.layout.addStretch(1)
+        self.setts = SettingsPanel(self)
+        self.settings_panel_hbox.addWidget(self.setts, 12)
 
-        # self.hbox.setStretch(1, 3)
-        self.setLayout(self.layout)
+        self.line_right = QLabel()
+        self.line_right.setPixmap(QPixmap("ui/images/line.png"))
+        self.settings_panel_hbox.addWidget(
+            self.line_right, 1, alignment=Qt.AlignCenter)
+
+        self.settings_panel_hbox.addStretch(1)
+
+        self.main_vbox.addStretch(1)
+        self.main_vbox.addLayout(self.settings_panel_hbox, stretch=2)
+        self.main_vbox.addStretch(1)
+
+        self.setLayout(self.main_vbox)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
-        self.label.resize(self.size())
+        self.background.resize(self.size())
         return super().resizeEvent(a0)
 
     def get_result(self):

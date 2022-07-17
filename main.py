@@ -8,6 +8,7 @@ from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 
+
 class MainWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -33,10 +34,12 @@ class MainWidget(QWidget):
 
         self.stacked_widget.stackUnder(self.overlay)
 
-        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(self.buttons_click)
+        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(
+            self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
-        self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.update_settings)
+        self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(
+            self.update_settings)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
@@ -71,6 +74,7 @@ class MainWidget(QWidget):
         self.overlay.resizeEvent(event)
         return super().resizeEvent(event)
 
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -83,6 +87,7 @@ class MainWindow(QMainWindow):
 
         self.mainWidget = MainWidget()
         self.setCentralWidget(self.mainWidget)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
