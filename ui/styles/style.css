@@ -1,9 +1,9 @@
 #main {
-  border-image: url("ui/images/start-bg.png") 0 0 0 0;
+  border-image: url("ui/images/home/background.png") 0 0 0 0;
 }
 
 #settings__widget {
-  border-image: url("ui/images/start-bg.png") 0 0 0 0;
+  border-image: url("ui/images/home/background.png") 0 0 0 0;
 }
 
 #settings__panel {

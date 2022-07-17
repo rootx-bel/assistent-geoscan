@@ -109,7 +109,7 @@ class SettingsPanel(QWidget):
         self.msgs_hbox_vbox.addWidget(
             self.messages_sound_button, alignment=Qt.AlignTop)
 
-        self.msgs_hbox_vbox.setContentsMargins(0, 30, 0, 0)
+        self.msgs_hbox_vbox.setContentsMargins(0, 70, 0, 0)
 
         self.msgs_hbox.addLayout(self.msgs_hbox_vbox)
         self.msgs_hbox.addStretch(1)

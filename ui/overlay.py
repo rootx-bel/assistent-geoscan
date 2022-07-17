@@ -1,12 +1,13 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, 
-QHBoxLayout, QLabel,  QSlider)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout,
+                             QHBoxLayout, QLabel,  QSlider)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QMouseEvent
+
 
 class TopBarButton(QLabel):
     clicked = pyqtSignal(str)
 
-    def __init__(self, pixmap, parent = None):
+    def __init__(self, pixmap, parent=None):
         super().__init__(parent)
         self.setPixmap(pixmap)
 
@@ -14,10 +15,11 @@ class TopBarButton(QLabel):
         self.clicked.emit(self.objectName())
         return super().mousePressEvent(event)
 
+
 class BottomBarButton(QLabel):
     clicked = pyqtSignal(bool)
 
-    def __init__(self, pixmap_on, pixmap_off, parent = None):
+    def __init__(self, pixmap_on, pixmap_off, parent=None):
         super().__init__(parent)
         self.pixmap_on = pixmap_on
         self.pixmap_off = pixmap_off
@@ -32,8 +34,9 @@ class BottomBarButton(QLabel):
         self.clicked.emit(self.is_on)
         return super().mousePressEvent(ev)
 
+
 class BottomSlider(QWidget):
-    def __init__(self, name, pix1, pix2, parent = None):
+    def __init__(self, name, pix1, pix2, parent=None):
         super().__init__(parent)
         self.left_lay = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
@@ -60,41 +63,51 @@ class BottomSlider(QWidget):
         else:
             self.slider.setValue(self.sv)
 
+
 class HorizontalBottomLay(QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.bot_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
-        self.volume_widget = BottomSlider("volume", QPixmap("ui/images/icons/volume.png"), QPixmap("ui/images/icons/mute.png"))
-        self.brightness_widget = BottomSlider("brightness", QPixmap("ui/images/icons/brightness.png"), QPixmap("ui/images/icons/brightness_off.png"))
+        self.volume_widget = BottomSlider("volume", QPixmap(
+            "ui/images/overlay/volume.png"), QPixmap("ui/images/overlay/mute.png"))
+        self.brightness_widget = BottomSlider("brightness", QPixmap(
+            "ui/images/overlay/brightness.png"), QPixmap("ui/images/overlay/brightness_off.png"))
         self.bot_layout.addStretch(1)
-        self.bot_layout.addWidget(self.volume_widget, alignment = Qt.AlignVCenter, stretch=1)
+        self.bot_layout.addWidget(
+            self.volume_widget, alignment=Qt.AlignVCenter, stretch=1)
         self.bot_layout.addStretch(1)
-        self.bot_layout.addWidget(self.brightness_widget, alignment = Qt.AlignVCenter, stretch=1)
+        self.bot_layout.addWidget(
+            self.brightness_widget, alignment=Qt.AlignVCenter, stretch=1)
         self.bot_layout.addStretch(1)
         self.setLayout(self.bot_layout)
 
+
 class HorizontalTopLay(QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.top_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
-        self.home_button = TopBarButton(QPixmap("ui/images/icons/home.png"))
+        self.home_button = TopBarButton(QPixmap("ui/images/overlay/home.png"))
         self.home_button.setObjectName("home")
-        self.setting_button = TopBarButton(QPixmap("ui/images/icons/gear.png"))
+        self.setting_button = TopBarButton(
+            QPixmap("ui/images/overlay/gear.png"))
         self.setting_button.setObjectName("settings")
-        self.top_layout.addWidget(self.home_button, alignment = Qt.AlignTop | Qt.AlignLeft)
-        self.top_layout.addWidget(self.setting_button, alignment = Qt. AlignTop | Qt.AlignRight)
+        self.top_layout.addWidget(
+            self.home_button, alignment=Qt.AlignTop | Qt.AlignLeft)
+        self.top_layout.addWidget(
+            self.setting_button, alignment=Qt. AlignTop | Qt.AlignRight)
         self.setLayout(self.top_layout)
 
     def change_home_button(self, name):
         self.home_button.setObjectName(name)
         if name == 'home':
-            self.home_button.setPixmap(QPixmap("ui/images/icons/home.png"))
+            self.home_button.setPixmap(QPixmap("ui/images/overlay/home.png"))
         elif name == 'back':
-            self.home_button.setPixmap(QPixmap("ui/images/icons/back.png"))
+            self.home_button.setPixmap(QPixmap("ui/images/overlay/back.png"))
+
 
 class Overlay():
     def __init__(self, parent=None):
@@ -122,5 +135,7 @@ class Overlay():
             self.top_lay.setting_button.hide()
 
     def resizeEvent(self, event):
-        self.top_lay.setGeometry(0, 0, self.__parent.frameGeometry().width(), 100)
-        self.bottom_lay.setGeometry(0, self.__parent.height() - 100, self.__parent.frameGeometry().width(), 100)
+        self.top_lay.setGeometry(
+            0, 0, self.__parent.frameGeometry().width(), 100)
+        self.bottom_lay.setGeometry(0, self.__parent.height(
+        ) - 100, self.__parent.frameGeometry().width(), 100)

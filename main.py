@@ -42,6 +42,8 @@ class MainWidget(QWidget):
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
         self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(
             self.update_settings)
+        self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(
+            self.update_settings)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
