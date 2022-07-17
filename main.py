@@ -32,7 +32,9 @@ class MainWidget(QWidget):
 
         self.stacked_widget.setCurrentWidget(self.home_widget)
 
-        self.stacked_widget.stackUnder(self.overlay)
+        self.overlay.set_under(self.stacked_widget)
+        # self.overlay.show()
+        # self.stacked_widget.stackUnder(self.overlay)
 
         self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(
             self.buttons_click)

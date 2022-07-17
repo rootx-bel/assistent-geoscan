@@ -63,6 +63,7 @@ class BottomSlider(QWidget):
 class HorizontalBottomLay(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.bot_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
         self.volume_widget = BottomSlider("volume", QPixmap("ui/images/icons/volume.png"), QPixmap("ui/images/icons/mute.png"))
@@ -77,14 +78,15 @@ class HorizontalBottomLay(QWidget):
 class HorizontalTopLay(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.top_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
         self.home_button = TopBarButton(QPixmap("ui/images/icons/home.png"))
         self.home_button.setObjectName("home")
         self.setting_button = TopBarButton(QPixmap("ui/images/icons/gear.png"))
         self.setting_button.setObjectName("settings")
-        self.top_layout.addWidget(self.home_button, alignment = Qt.AlignVCenter | Qt.AlignLeft)
-        self.top_layout.addWidget(self.setting_button, alignment = Qt. AlignVCenter | Qt.AlignRight)
+        self.top_layout.addWidget(self.home_button, alignment = Qt.AlignTop | Qt.AlignLeft)
+        self.top_layout.addWidget(self.setting_button, alignment = Qt. AlignTop | Qt.AlignRight)
         self.setLayout(self.top_layout)
 
     def change_home_button(self, name):
@@ -94,16 +96,24 @@ class HorizontalTopLay(QWidget):
         elif name == 'back':
             self.home_button.setPixmap(QPixmap("ui/images/icons/back.png"))
 
-class Overlay(QWidget):
+class Overlay():
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
-        self.layout = QVBoxLayout()
-        self.top_lay = HorizontalTopLay()
-        self.layout.addWidget(self.top_lay, alignment = Qt.AlignTop)
-        self.bottom_lay = HorizontalBottomLay()
-        self.layout.addWidget(self.bottom_lay, alignment=Qt.AlignBottom)
-        self.setLayout(self.layout)
+        self.__parent = parent
+        self.top_lay = HorizontalTopLay(parent)
+        self.bottom_lay = HorizontalBottomLay(parent)
+
+    def set_under(self, widget):
+        widget.stackUnder(self.bottom_lay)
+        widget.stackUnder(self.top_lay)
+
+    def hide(self):
+        self.top_lay.hide()
+        self.bottom_lay.hide()
+
+    def show(self):
+        self.set_visible_settings(True)
+        self.top_lay.show()
+        self.bottom_lay.show()
 
     def set_visible_settings(self, visible=True):
         if visible:
@@ -111,11 +121,6 @@ class Overlay(QWidget):
         else:
             self.top_lay.setting_button.hide()
 
-    def show(self):
-        self.set_visible_settings(True)
-        super().show()
-
     def resizeEvent(self, event):
-        self.setGeometry(self.parent().frameGeometry())
-        self.top_lay.setGeometry(0, 0, self.parent().frameGeometry().width(), self.top_lay.frameGeometry().height())
-        self.bottom_lay.setGeometry(0, self.bottom_lay.y(), self.parent().frameGeometry().width(), self.bottom_lay.frameGeometry().height())
+        self.top_lay.setGeometry(0, 0, self.__parent.frameGeometry().width(), 100)
+        self.bottom_lay.setGeometry(0, self.__parent.height() - 100, self.__parent.frameGeometry().width(), 100)

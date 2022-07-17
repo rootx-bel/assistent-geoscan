@@ -1,9 +1,8 @@
-from tkinter import E
-from PyQt5.QtWidgets import QWidget, QCheckBox, QLabel, QDesktopWidget, QVBoxLayout, QPushButton, QComboBox, QSlider, QApplication, QMainWindow, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton, QApplication, QMainWindow, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent, pyqtSignal, QObject
 import sys
-from ui.ColorPicker.picker import ColorPicker
+from ui.colorpicker.picker import ColorPicker
 
 
 class FourStateButton(QLabel):
