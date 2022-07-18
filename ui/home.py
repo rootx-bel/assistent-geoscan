@@ -91,7 +91,6 @@ class HomeWidget(QLabel):
 
         self.partners = QLabel(self)
         self.partners.setPixmap(QPixmap("ui/images/home/partners.png"))
-        self.layout.addWidget(self.partners,
-                              alignment=Qt.AlignBottom | Qt.AlignRight, stretch=1)
+        self.layout.addWidget(self.partners, alignment=Qt.AlignBottom | Qt.AlignRight, stretch=1)
 
         self.setLayout(self.layout)
