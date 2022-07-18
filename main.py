@@ -94,8 +94,13 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowTitle("Assistent")
 
-        self.mainWidget = MainWidget()
-        self.setCentralWidget(self.mainWidget)
+        self.main_widget = MainWidget()
+        self.main_widget.settings_widget.open("saves/settings.json")
+        self.setCentralWidget(self.main_widget)
+
+    def closeEvent(self, event):
+        self.main_widget.settings_widget.save("saves/settings.json")
+        return super().closeEvent(event)
 
 
 if __name__ == "__main__":
