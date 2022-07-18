@@ -106,7 +106,7 @@ class FrameProcessor():
 
     def set_settings(self, params):
         # Настройки; В параметры приходит словарь: color, light
-        self.color = Color(params['color'])
-        self.light = params['light']
+        self.color = params['color']
+        self.light = params['brightness']
         self.light = self.light * 0.01
         return 0

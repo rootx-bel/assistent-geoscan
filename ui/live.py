@@ -91,3 +91,6 @@ class LiveWidget(QWidget):
             self.display.th.start()
         else:
             self.display.th.quit()
+
+    def set_settings(self, param):
+        self.display.th.fp.set_settings(param)

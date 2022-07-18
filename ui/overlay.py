@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel,  QSlider
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QMouseEvent
+from PyQt5.QtGui import QPixmap
 
 class TopBarButton(QLabel):
     clicked = pyqtSignal(str)
@@ -89,16 +89,19 @@ class HorizontalBottomLay(QWidget):
         self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.bot_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
-        self.volume_widget = BottomSlider("volume", QPixmap(
-            "ui/images/overlay/volume.png"), QPixmap("ui/images/overlay/mute.png"))
-        self.brightness_widget = BottomSlider("brightness", QPixmap(
-            "ui/images/overlay/brightness.png"), QPixmap("ui/images/overlay/brightness_off.png"))
+        self.volume_widget = BottomSlider("volume",
+            QPixmap("ui/images/overlay/volume.png"),
+            QPixmap("ui/images/overlay/mute.png")
+        )
+        self.brightness_widget = BottomSlider(
+            "brightness",
+            QPixmap("ui/images/overlay/brightness.png"),
+            QPixmap("ui/images/overlay/brightness_off.png")
+        )
         self.bot_layout.addStretch(1)
-        self.bot_layout.addWidget(
-            self.volume_widget, alignment=Qt.AlignVCenter, stretch=1)
+        self.bot_layout.addWidget(self.volume_widget, alignment=Qt.AlignVCenter, stretch=1)
         self.bot_layout.addStretch(1)
-        self.bot_layout.addWidget(
-            self.brightness_widget, alignment=Qt.AlignVCenter, stretch=1)
+        self.bot_layout.addWidget(self.brightness_widget, alignment=Qt.AlignVCenter, stretch=1)
         self.bot_layout.addStretch(1)
         self.setLayout(self.bot_layout)
 
@@ -111,13 +114,10 @@ class HorizontalTopLay(QWidget):
         self.setContentsMargins(0, 0, 0, 0)
         self.home_button = TopBarButton(QPixmap("ui/images/overlay/home.png"))
         self.home_button.setObjectName("home")
-        self.setting_button = TopBarButton(
-            QPixmap("ui/images/overlay/gear.png"))
+        self.setting_button = TopBarButton(QPixmap("ui/images/overlay/gear.png"))
         self.setting_button.setObjectName("settings")
-        self.top_layout.addWidget(
-            self.home_button, alignment=Qt.AlignTop | Qt.AlignLeft)
-        self.top_layout.addWidget(
-            self.setting_button, alignment=Qt. AlignTop | Qt.AlignRight)
+        self.top_layout.addWidget(self.home_button, alignment=Qt.AlignTop | Qt.AlignLeft)
+        self.top_layout.addWidget(self.setting_button, alignment=Qt. AlignTop | Qt.AlignRight)
         self.setLayout(self.top_layout)
 
     def change_home_button(self, name):
@@ -127,12 +127,31 @@ class HorizontalTopLay(QWidget):
         elif name == 'back':
             self.home_button.setPixmap(QPixmap("ui/images/overlay/back.png"))
 
+class AlarmWidget(QLabel):
+    def __init__(self, parent=None):
+        self.__visible = True
+        self.__detect = False
+        super().__init__(parent=parent)
+        self.setPixmap(QPixmap("ui/images/overlay/alarm.png"))
+
+    def change_visible(self):
+        self.__visible = not self.__visible
+
+    def change_detect(self, value):
+        self.__detect = value
+
+    def show(self):
+        if self.__visible and self.__detect:
+            super().show()
+        else:
+            super().hide()
 
 class Overlay():
     def __init__(self, parent=None):
         self.__parent = parent
         self.top_lay = HorizontalTopLay(parent)
         self.bottom_lay = HorizontalBottomLay(parent)
+        self.alarm = AlarmWidget(parent)
 
     def set_under(self, widget):
         widget.stackUnder(self.bottom_lay)
@@ -141,20 +160,26 @@ class Overlay():
     def hide(self):
         self.top_lay.hide()
         self.bottom_lay.hide()
+        self.alarm.hide()
 
     def show(self):
         self.set_visible_settings(True)
         self.top_lay.show()
         self.bottom_lay.show()
+        self.alarm.show()
 
     def set_visible_settings(self, visible=True):
         if visible:
             self.top_lay.setting_button.show()
+            self.alarm.show()
         else:
             self.top_lay.setting_button.hide()
+            self.alarm.hide()
 
     def resizeEvent(self, event):
-        self.top_lay.setGeometry(
-            0, 0, self.__parent.frameGeometry().width(), 100)
-        self.bottom_lay.setGeometry(0, self.__parent.height(
-        ) - 100, self.__parent.frameGeometry().width(), 100)
+        parent_width = self.__parent.frameGeometry().width()
+        parent_height = self.__parent.frameGeometry().height()
+
+        self.top_lay.setGeometry(0, 0, parent_width, 100)
+        self.bottom_lay.setGeometry(0, parent_height - 100, parent_width, 100)
+        self.alarm.setGeometry(parent_width - 80, parent_height - 120, 100, 100)

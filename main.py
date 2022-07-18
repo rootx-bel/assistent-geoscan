@@ -35,22 +35,27 @@ class MainWidget(QWidget):
         self.overlay.set_under(self.stacked_widget)
         
         self.settings_widget.setts.messages_sound_button.clicked.connect(self.overlay.bottom_lay.volume_widget.pic_button.change_state)
+        self.settings_widget.setts.messages_visual_button.clicked.connect(self.overlay.alarm.change_visible)
+        self.settings_widget.changed.connect(self.accept_settings)
 
         self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(
             self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
         self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(
-            self.update_settings)
+            self.__update_settings)
         self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(
-            self.update_settings)
+            self.__update_settings)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 
-    def update_settings(self, value):
+    def __update_settings(self, value):
         name = self.sender().objectName()
-        self.settings_widget.result[name] = value
+        self.settings_widget.change_result(name, value)
+
+    def accept_settings(self, value):
+        self.live_widget.set_settings(value)
 
     def buttons_click(self, value):
         if value == "load":
