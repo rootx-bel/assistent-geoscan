@@ -11,10 +11,6 @@
   border-radius: 20%;
 }
 
-#cp {
-  border-color: green;
-}
-
 QSlider::groove:horizontal {
   background: rgba(255, 255, 255, 100);
   height: 5px;

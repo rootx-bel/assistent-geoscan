@@ -43,7 +43,6 @@ class Buttons(QWidget):
         self.setLayout(self.layout)
 
     def eventFilter(self, object, event):
-        # print(object.objectName())
         if event.type() == QEvent.Enter:
             object.setPixmap(
                 QPixmap(f"ui/images/home/{object.objectName()}-hover.png"))

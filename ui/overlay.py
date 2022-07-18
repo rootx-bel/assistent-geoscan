@@ -25,13 +25,15 @@ class BottomBarButton(QLabel):
         self.setPixmap(self.pixmap)
         self.is_on = True
 
-    def mousePressEvent(self, ev: QMouseEvent) -> None:
+    def mousePressEvent(self, event):
+        self.change_state()
+        return super().mousePressEvent(event)
+
+    def change_state(self):
         self.pixmap = self.pixmap_off if self.is_on else self.pixmap_on
         self.is_on = not self.is_on
         self.setPixmap(self.pixmap)
         self.clicked.emit(self.is_on)
-        return super().mousePressEvent(ev)
-
 
 class BottomSlider(QWidget):
     def __init__(self, name, pix1, pix2, parent=None):
@@ -156,6 +158,3 @@ class Overlay():
             0, 0, self.__parent.frameGeometry().width(), 100)
         self.bottom_lay.setGeometry(0, self.__parent.height(
         ) - 100, self.__parent.frameGeometry().width(), 100)
-
-
- 
