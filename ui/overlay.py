@@ -69,10 +69,13 @@ class BottomSlider(QWidget):
         self.left_lay.addWidget(self.slider)
         self.left_lay.addWidget(self.number, alignment=Qt.AlignRight)
 
-    def getValue(self,x):
+    def getValue(self, x):
         y = str(x)+"%"
         self.number.setText(y)
-        
+
+    def load(self, value):
+        self.slider.setValue(value)
+        self.sv = value
 
     def click_handle(self, state):
         self.slider.setEnabled(state)

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-import sys
+import sys, json, os
 from PyQt5.QtGui import *
 from PyQt5 import *
 from PyQt5.QtCore import QCoreApplication
@@ -95,11 +95,44 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Assistent")
 
         self.main_widget = MainWidget()
-        self.main_widget.settings_widget.open("saves/settings.json")
+        self.open("saves/settings.json")
         self.setCentralWidget(self.main_widget)
 
+    def open(self, filename):
+        if os.path.exists(filename):
+            with open(filename, 'r') as f:
+                self.main_widget.settings_widget.result = json.load(f)
+        else:
+            self.main_widget.settings_widget.result = {}
+            self.main_widget.settings_widget.result["color"] = (255,0,0)
+            self.main_widget.settings_widget.result["sound"] = True
+            self.main_widget.settings_widget.result["visual"] = True
+            self.main_widget.settings_widget.result["volume"] = 50
+            self.main_widget.settings_widget.result["brightness"] = 50
+        self.main_widget.settings_widget.setts.messages_sound_button.load(
+            self.main_widget.settings_widget.result["sound"]
+        )
+        self.main_widget.settings_widget.setts.messages_visual_button.load(
+            self.main_widget.settings_widget.result["visual"]
+        )
+        self.main_widget.overlay.bottom_lay.volume_widget.load(
+            self.main_widget.settings_widget.result["volume"]
+        )
+        self.main_widget.overlay.bottom_lay.brightness_widget.load(
+            self.main_widget.settings_widget.result["brightness"]
+        )
+
+
+    def save(self, filename):
+        result = self.main_widget.settings_widget.result
+        result['sound'] = not result['sound']
+        result['visual'] = result['visual']
+        print(result)
+        with open(filename, 'w') as f:
+            json.dump(result, f)
+
     def closeEvent(self, event):
-        self.main_widget.settings_widget.save("saves/settings.json")
+        self.save("saves/settings.json")
         return super().closeEvent(event)
 
 

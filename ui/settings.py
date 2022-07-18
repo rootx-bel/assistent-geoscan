@@ -1,5 +1,3 @@
-import json, os
-from unittest import result
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -190,28 +188,6 @@ class SettingsWidget(QWidget):
     def change_state(self, value):
         name = self.sender().objectName()
         self.change_result(name, value)
-
-    def open(self, filename):
-        if os.path.exists(filename):
-            with open(filename, 'r') as f:
-                self.result = json.load(f)
-        else:
-            self.result = {}
-            self.result["color"] = (255,0,0)
-            self.result["sound"] = True
-            self.result["visual"] = True
-            self.result["volume"] = 50
-            self.result["brightness"] = 50
-        self.setts.messages_sound_button.load(self.result['sound'])
-        self.setts.messages_visual_button.load(self.result['visual'])
-        print(self.result)
-
-    def save(self, filename):
-        self.result['sound'] = not self.result['sound']
-        self.result['visual'] = not self.result['visual']
-        print(self.result)
-        with open(filename, 'w') as f:
-            json.dump(self.result, f)
 
     def resizeEvent(self, event):
         self.background.resize(self.size())
