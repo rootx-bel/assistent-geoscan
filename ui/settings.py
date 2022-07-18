@@ -54,7 +54,6 @@ class FourStateButton(QLabel):
         return super().mousePressEvent(event)
 
     def load(self, value):
-        # self.setChecked(value)
         if value:
             self.clicked.emit(value)
 
