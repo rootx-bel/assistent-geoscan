@@ -126,6 +126,10 @@ class MainWindow(QMainWindow):
             self.main_widget.settings_widget.result["brightness"]
         )
 
+        self.main_widget.settings_widget.setts.color_picker.change_color(
+            self.main_widget.settings_widget.result["color"]
+        )
+
 
     def save(self, filename):
         result = self.main_widget.settings_widget.result
