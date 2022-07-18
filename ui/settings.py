@@ -58,8 +58,7 @@ class FourStateButton(QLabel):
 class SettingsPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.result = {}
-        btn = QPushButton()
+        # btn = QPushButton()
 
         self.label = QLabel(self)
         self.label.setObjectName("settings__panel")
@@ -122,9 +121,28 @@ class SettingsPanel(QWidget):
         self.line.setPixmap(QPixmap("ui/images/line.png"))
         self.layout.addWidget(self.line)
 
-        self.colorPicker = ColorPicker(width=300, startupcolor=[0, 255, 255])
-        self.colorPicker.setObjectName("cp")
-        self.layout.addWidget(self.colorPicker)
+        self.mask_vbox = QVBoxLayout(self)
+        self.mask_topic_image = QLabel(self)
+        self.mask_topic_image.setPixmap(
+            QPixmap("ui/images/settings/mask/topic.png"))
+        self.mask_vbox.addWidget(self.mask_topic_image,
+                        alignment=Qt.AlignRight | Qt.AlignTop)
+
+        self.mask_vbox_hbox = QHBoxLayout(self)
+        self.color_picker = ColorPicker(width=300, startupcolor=[0, 255, 255])
+        self.color_picker.setObjectName("cp")
+        
+        self.mask_vbox_hbox.addWidget(self.color_picker,
+                        alignment=Qt.AlignRight | Qt.AlignTop)
+        
+        self.mask_dots = QLabel(self)
+        self.mask_dots.setPixmap(
+            QPixmap("ui/images/settings/mask/dots.png"))
+        self.mask_vbox_hbox.addWidget(self.mask_dots,
+                        alignment=Qt.AlignRight | Qt.AlignTop)
+        self.mask_vbox.addLayout(self.mask_vbox_hbox)
+       
+        self.layout.addLayout(self.mask_vbox)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.label.resize(self.size())
@@ -160,11 +178,17 @@ class SettingsWidget(QWidget):
 
         self.settings_panel_hbox.addStretch(1)
 
+        self.setts.color_picker.change_value.connect(self.change_color)
+
         self.main_vbox.addStretch(1)
         self.main_vbox.addLayout(self.settings_panel_hbox, stretch=2)
         self.main_vbox.addStretch(1)
 
         self.setLayout(self.main_vbox)
+
+    def change_color(self, value):
+        self.result['color'] = value
+        print(self.result)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.background.resize(self.size())

@@ -1,8 +1,6 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout,
-                             QHBoxLayout, QLabel,  QSlider)
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel,  QSlider
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QMouseEvent
-
 
 class TopBarButton(QLabel):
     clicked = pyqtSignal(str)
@@ -41,11 +39,24 @@ class BottomSlider(QWidget):
         self.left_lay = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
 
+        self.number = QLabel(self)
+        self.number.setStyleSheet("""
+            color: white; 
+            font-size: 18pt;
+            background: rgba(45, 45, 45, 200);
+            border-radius: 8px;
+        """)
+
         self.pic_button = BottomBarButton(pix1, pix2)
-        self.sv = 30
+        self.sv = 50
         self.slider = QSlider(Qt.Horizontal, self)
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(100)
+
+        self.slider.setTickInterval(1)
+        self.slider.setRange(0,100)
+        self.slider.setFocusPolicy(Qt.StrongFocus)
+        self.slider.setTickPosition(QSlider.TicksBothSides)
+        self.slider.setSingleStep(1)
+        self.slider.valueChanged.connect(self.getValue)
         self.slider.setValue(self.sv)
         self.slider.setObjectName(name)
 
@@ -54,6 +65,12 @@ class BottomSlider(QWidget):
 
         self.left_lay.addWidget(self.pic_button)
         self.left_lay.addWidget(self.slider)
+        self.left_lay.addWidget(self.number, alignment=Qt.AlignRight)
+
+    def getValue(self,x):
+        y = str(x)+"%"
+        self.number.setText(y)
+        
 
     def click_handle(self, state):
         self.slider.setEnabled(state)
@@ -139,3 +156,6 @@ class Overlay():
             0, 0, self.__parent.frameGeometry().width(), 100)
         self.bottom_lay.setGeometry(0, self.__parent.height(
         ) - 100, self.__parent.frameGeometry().width(), 100)
+
+
+ 

@@ -51,6 +51,7 @@ class MainWidget(QWidget):
     def update_settings(self, value):
         name = self.sender().objectName()
         self.settings_widget.result[name] = value
+        print(self.settings_widget.result)
 
     def buttons_click(self, value):
         if value == "load":
@@ -101,7 +102,7 @@ if __name__ == "__main__":
         app.setStyleSheet(_style)
 
     win = MainWindow()
-    win.resize(1920, 1080)
-    win.setMinimumSize(1920, 1080)
+    win.resize(1440, 900)
+    win.setMinimumSize(1440, 900)
     win.show()
     sys.exit(app.exec_())
