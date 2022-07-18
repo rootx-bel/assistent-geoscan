@@ -1,17 +1,11 @@
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QLabel
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt, QEvent, pyqtSignal, QObject
-
-
-class ButtonCommunicate(QObject):
-    menu_click = pyqtSignal(str)
-
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal
 
 class Buttons(QWidget):
+    menu_click = pyqtSignal(str)
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        self.buttons_signal = ButtonCommunicate()
 
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 80, 0, 0)
@@ -53,7 +47,7 @@ class Buttons(QWidget):
                 QPixmap(f"ui/images/home/{object.objectName()}.png"))
             self.stop = False
         elif event.type() == QEvent.MouseButtonPress:
-            self.buttons_signal.menu_click.emit(object.objectName())
+            self.menu_click.emit(object.objectName())
         return False
 
 

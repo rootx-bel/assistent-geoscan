@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import *
 import sys, json, os
 from PyQt5.QtGui import *
 from PyQt5 import *
-from PyQt5.QtCore import QCoreApplication
 from ui.live import LiveWidget
 from ui.settings import SettingsWidget
 from ui.home import HomeWidget
@@ -38,14 +37,16 @@ class MainWidget(QWidget):
         self.settings_widget.setts.messages_visual_button.clicked.connect(self.overlay.alarm.change_visible)
         self.settings_widget.changed.connect(self.accept_settings)
 
-        self.home_widget.vmenu.buttons.buttons_signal.menu_click.connect(
-            self.buttons_click)
+        self.home_widget.vmenu.buttons.menu_click.connect(self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
-        self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(
-            self.__update_settings)
-        self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(
-            self.__update_settings)
+        self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.__update_settings)
+        self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(self.__update_settings)
+        self.overlay.bottom_lay.volume_widget.pic_button.clicked.connect(lambda:
+            self.settings_widget.setts.messages_sound_button.setChecked(
+                not self.overlay.bottom_lay.volume_widget.pic_button.is_on
+            )
+        )
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
@@ -72,7 +73,7 @@ class MainWidget(QWidget):
                 self.overlay.top_lay.change_home_button('back')
             self.stacked_widget.setCurrentWidget(self.settings_widget)
         elif value == "exit":
-            QCoreApplication.instance().quit()
+            self.parent().close()
         elif value == "home":
             if self.stacked_widget.currentWidget() is self.live_widget:
                 self.live_widget.set_video_thread(False)
@@ -101,12 +102,15 @@ class MainWindow(QMainWindow):
     def open(self, filename):
         if os.path.exists(filename):
             with open(filename, 'r') as f:
-                self.main_widget.settings_widget.result = json.load(f)
+                result = json.load(f)
+                result['sound'] = not result['sound']
+                result['visual'] = not result['visual']
+                self.main_widget.settings_widget.result = result
         else:
             self.main_widget.settings_widget.result = {}
             self.main_widget.settings_widget.result["color"] = (255,0,0)
-            self.main_widget.settings_widget.result["sound"] = True
-            self.main_widget.settings_widget.result["visual"] = True
+            self.main_widget.settings_widget.result["sound"] = False
+            self.main_widget.settings_widget.result["visual"] = False
             self.main_widget.settings_widget.result["volume"] = 50
             self.main_widget.settings_widget.result["brightness"] = 50
         self.main_widget.settings_widget.setts.messages_sound_button.load(
@@ -126,8 +130,7 @@ class MainWindow(QMainWindow):
     def save(self, filename):
         result = self.main_widget.settings_widget.result
         result['sound'] = not result['sound']
-        result['visual'] = result['visual']
-        print(result)
+        result['visual'] = not result['visual']
         with open(filename, 'w') as f:
             json.dump(result, f)
 
