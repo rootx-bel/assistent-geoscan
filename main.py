@@ -100,35 +100,24 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
     def open(self, filename):
+        result = {}
         if os.path.exists(filename):
             with open(filename, 'r') as f:
                 result = json.load(f)
                 result['sound'] = not result['sound']
                 result['visual'] = not result['visual']
-                self.main_widget.settings_widget.result = result
         else:
-            self.main_widget.settings_widget.result = {}
-            self.main_widget.settings_widget.result["color"] = (255,0,0)
-            self.main_widget.settings_widget.result["sound"] = False
-            self.main_widget.settings_widget.result["visual"] = False
-            self.main_widget.settings_widget.result["volume"] = 50
-            self.main_widget.settings_widget.result["brightness"] = 50
-        self.main_widget.settings_widget.setts.messages_sound_button.load(
-            self.main_widget.settings_widget.result["sound"]
-        )
-        self.main_widget.settings_widget.setts.messages_visual_button.load(
-            self.main_widget.settings_widget.result["visual"]
-        )
-        self.main_widget.overlay.bottom_lay.volume_widget.load(
-            self.main_widget.settings_widget.result["volume"]
-        )
-        self.main_widget.overlay.bottom_lay.brightness_widget.load(
-            self.main_widget.settings_widget.result["brightness"]
-        )
-
-        self.main_widget.settings_widget.setts.color_picker.change_color(
-            self.main_widget.settings_widget.result["color"]
-        )
+            result["color"] = (255,0,0)
+            result["sound"] = False
+            result["visual"] = False
+            result["volume"] = 50
+            result["brightness"] = 50
+        self.main_widget.settings_widget.result = result
+        self.main_widget.settings_widget.setts.messages_sound_button.load(result["sound"])
+        self.main_widget.settings_widget.setts.messages_visual_button.load(result["visual"])
+        self.main_widget.overlay.bottom_lay.volume_widget.load(result["volume"])
+        self.main_widget.overlay.bottom_lay.brightness_widget.load(result["brightness"])
+        self.main_widget.settings_widget.setts.color_picker.change_color(result["color"])
 
 
     def save(self, filename):
