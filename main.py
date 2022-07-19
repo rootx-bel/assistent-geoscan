@@ -176,7 +176,6 @@ class MainWindow(QMainWindow):
         self.save("saves/settings.json")
         return super().closeEvent(event)
 
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 

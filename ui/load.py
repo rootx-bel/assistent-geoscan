@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QApplication, QTabWidget, QProgressBar
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QTabWidget, QProgressBar
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from glob import glob
@@ -34,8 +34,6 @@ class PathField(QWidget):
         
         self.text = QLabel(self)
         self.text.setObjectName("path_field_text")
-        # self.text.setSizePolicy(QSizePolicy(QSizePolicy.Ignored,
-        #                                      QSizePolicy.Ignored))
 
         self.button = Button(QPixmap("ui/images/load/folder.png"), self)
         self.button.clicked.connect(self.open_directory_dialog)
@@ -74,8 +72,19 @@ class LoadPanel(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(30, 30, 30, 30)
         
+        
+        load_text = QLabel(self)
+        load_text.setText('Открыть папку')
+        load_text.setObjectName('load_text')
+        self.layout.addWidget(load_text)
+
         self.load_file_dialog_form = FileForm(self)
         self.layout.addWidget(self.load_file_dialog_form)
+
+        save_text = QLabel(self)
+        save_text.setText('Сохранить в папку')
+        save_text.setObjectName('save_text')
+        self.layout.addWidget(save_text)
 
         self.save_file_dialog_form = FileForm(self)
         self.layout.addWidget(self.save_file_dialog_form)
@@ -168,15 +177,3 @@ class TabViewerWidget(QWidget):
     def stop_threads(self):
         for index in range(self.tab.count()):
             self.tab.widget(index).th.quit()  
-
-if __name__  == '__main__':
-    import sys
-    app = QApplication(sys.argv)
-    with open("ui/styles/style.css", "r") as f:
-        _style = f.read()
-        app.setStyleSheet(_style)
-
-    win = TabViewerWidget()
-    win.resize(1920,1080)
-    win.show()
-    sys.exit(app.exec_())

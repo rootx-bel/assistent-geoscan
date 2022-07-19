@@ -105,7 +105,7 @@ class PlayStreaming(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.label, alignment=Qt.AlignCenter)
-        self.th = Thread('c.mp4','saves','c.mp4',parent=self)
+        self.th = Thread('','', 0,parent=self)
         self.th.change_pixmap.connect(self.setImage)
         self.resize_signal.connect(self.th.scaled)
         self.setLayout(self.layout)

@@ -48,6 +48,7 @@ class CropWidget(QWidget):
         self.initUI()
     
     def initUI(self):
+        self.setWindowTitle('Crop frame')
         self.setContentsMargins(0, 0, 0, 0)
         self.scroll = QScrollArea(self)
         self.scroll.setStyleSheet("""border-image: url("ui/images/home/background.png") 0 0 0 0;""")

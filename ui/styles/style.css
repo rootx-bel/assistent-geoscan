@@ -17,6 +17,11 @@
   font-size: 35px;
 }
 
+#load_text, #save_text {
+  font-size: 30px;
+  color: white;
+}
+
 QSlider::groove:horizontal {
   background: rgba(255, 255, 255, 100);
   height: 5px;
