@@ -5,10 +5,18 @@ from PIL import Image
 from torchvision import transforms as T
 import back.network as network
 import torch.nn as nn
-from torch.multiprocessing import Pool, Process, set_start_method
+from torch.multiprocessing import set_start_method
 import subprocess as sp
 import pysrt
 import argparse
+from exif import Image
+from GPSPhoto import gpsphoto
+import os
+
+
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, pyqtSlot
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', action='store_true', help='Debug mode')
@@ -40,7 +48,6 @@ def set_bn_momentum(model, momentum=0.1):
             m.momentum = momentum
 
 class FrameProcessor():
-    
     cmap = voc_cmap()
 
     def __init__(self):
@@ -50,11 +57,11 @@ class FrameProcessor():
             set_start_method('spawn')
             self.model = network.modeling.__dict__["deeplabv3plus_mobilenet"](num_classes=21, output_stride=16)
             set_bn_momentum(self.model.backbone, momentum=0.01)
-            checkpoint = torch.load("back/models/model.pth", map_location=torch.device('cpu'))
+            checkpoint = torch.load("back/models/model.pth", map_location=torch.source('cpu'))
             self.model.load_state_dict(checkpoint["model_state"])
             self.model = nn.DataParallel(self.model)
-            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-            self.model.to(self.device)
+            self.source = torch.source("cuda:0" if torch.cuda.is_available() else "cpu")
+            self.model.to(self.source)
             self.model.eval()
             self.transform = T.Compose([
                 T.ToTensor(),
@@ -68,10 +75,9 @@ class FrameProcessor():
         self.subs = None
         self.numframe = 0
 
-    def get_segmentation(self, img, video = False):
+    def get_segmentation(self, img):
         #обработка
         if not self.__debug:
-            print('debug')
             data = None
             crop = None
             with torch.no_grad():
@@ -81,7 +87,7 @@ class FrameProcessor():
                 img = cv2.resize(img, (self.width, self.height))
                 img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 img = self.transform(img).unsqueeze(0)
-                img.to(self.device)
+                img.to(self.source)
                 outputs = self.model(img)
                 preds = outputs.max(1)[1].detach().cpu().numpy()
                 colorized_preds = self.cmap[preds].astype('uint8')
@@ -116,24 +122,116 @@ class FrameProcessor():
                 open_cv_image = cv2.resize(open_cv_image, (1920, 1080))
                 open_cv_image = cv2.addWeighted(img_orig, 0.8, open_cv_image, self.light, 0.0)
                 open_cv_image = np.array(open_cv_image)
-            if video:
-                gps = self.subs[self.numframe].replace(' ', '')
-                gps_index = gps.index('GPS') + 3
-                end = gps.index(')', gps_index)
-                data = [float(coord) for coord in gps[gps_index + 1: end].split(',')]
-                self.numframe += 1
             crop = np.array(open_cv_image[max*3-100:max2*3+100, min*3-100:min2*3+100])
             crop_orig = np.array(img_orig[max*3-100:max2*3+100, min*3-100:min2*3+100])
-            return open_cv_image, detect, data, crop_orig, crop
-        return img, False, [], None, None
-
-    def process_subtitles(self, path):
-        if not self.__debug:
-            out = sp.run(['back/ffmpeg','-i', path, '-map', 's:0', '-f','webvtt','-'], stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
-            self.subs = out.stdout.replace('WEBVTT\n\n', '').split('\n\n')
+            return open_cv_image, detect, crop_orig, crop
+        return img, False, img, img
 
     def set_settings(self, params):
         #Настройки; В параметры приходит словарь: color, light
         self.color = params['color']
         self.light = params['brightness']
         self.light = self.light * 0.01
+
+class FileProcessor():
+    def __init__(self, load_path, save_path):
+        self.name = 0
+        self.save_path = save_path
+        self.load_path = load_path
+        if type(self.load_path) == str:
+            self.folder_path = os.path.basename(load_path)
+        else:
+            self.folder_path = None
+        self.subtitles = None
+
+    def save_image(self, image, metadata = None):
+        if not os.path.exists(f'{self.save_path}/{self.folder_path}'):
+            os.mkdir(f'{self.save_path}/{self.folder_path}')
+        path = f'{self.save_path}/{self.folder_path}/{self.name}.jpg'
+        cv2.imwrite(path, image)
+        self.name += 1
+        if metadata is not None:
+            self.save_metadata(path, metadata)
+
+    def save_metadata(self, path, data):
+        photo = gpsphoto.GPSPhoto(path)
+        info = gpsphoto.GPSInfo((data[1], data[0]), alt=int(data[2]))
+        photo.modGPSData(info, path)
+
+    def load_subtitles(self):
+        out = sp.run(
+            ['back/ffmpeg', '-i', self.load_path, '-map', 's:0', '-f', 'webvtt','-'],
+            stdout=sp.PIPE,
+            stderr=sp.PIPE,
+            universal_newlines=True
+        )
+        if out.stdout != '':
+            self.subtitles = out.stdout.replace('WEBVTT\n\n', '').split('\n\n')
+        else:
+            self.subtitles = None
+
+    def get_subtitles(self, frame_number):
+        gps = self.subtitles[frame_number].replace(' ', '')
+        gps_index = gps.index('GPS') + 3
+        end = gps.index(')', gps_index)
+        subtitles = [float(coord) for coord in gps[gps_index + 1: end].split(',')]
+        return subtitles
+
+class VideoThread(QThread):
+    change_pixmap = pyqtSignal(QImage)
+    detected = pyqtSignal(bool)
+    cropped = pyqtSignal(np.ndarray, np.ndarray)
+
+    scaled_size = QSize()
+    frame_processor = FrameProcessor()
+
+    def __init__(self, source, save_path=None, parent=None):
+        self.__run = True
+        super().__init__(parent)
+        self.source = source
+        self.save_path = save_path
+        self.frame_count = 0
+        self.file_processor = FileProcessor(source, save_path)
+
+    def run(self):
+        cap = cv2.VideoCapture(self.source)
+        video = False
+        frame_number = 0
+        if type(self.source) == str:
+            self.frame_count = int(cv2.VideoCapture.get(cap, int(cv2.CAP_PROP_FRAME_COUNT)))
+            self.file_processor.load_subtitles()
+            video = True
+
+        while self.__run:
+            ret, frame = cap.read()
+            if ret:
+                img, is_detected, crop_orig, crop = self.frame_processor.get_segmentation(frame)
+                self.detected.emit(is_detected)
+                if is_detected:
+                    if video:
+                        if self.file_processor.subtitles is not None:
+                            self.file_processor.save_image(
+                                img,
+                                self.file_processor.get_subtitles(frame_number)    
+                            )
+                        else:
+                            self.file_processor.save_image(img)
+                    self.cropped.emit(crop_orig, crop)
+
+                image = QImage()
+                if not video:
+                    convertToQtFormat = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
+                    image = convertToQtFormat.scaled(self.scaled_size)
+                self.change_pixmap.emit(image)
+            frame_number += 1
+
+    def scaled(self, scaled_size):
+        self.scaled_size = scaled_size
+
+    def quit(self):
+        self.__run = False
+        super().quit()
+
+    def start(self):
+        self.__run = True
+        super().start()

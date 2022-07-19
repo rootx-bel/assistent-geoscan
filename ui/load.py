@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QTabWidget, QProgressBar
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QTabWidget, QProgressBar, QStackedWidget
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from glob import glob
-from ui.live import Thread
+from back.video import VideoThread
 
 class Button(QLabel):
     hovered = pyqtSignal(bool)
@@ -140,13 +140,23 @@ class TabViewerItemWidget(QWidget):
     def __init__(self, src, save_path, parent=None):
         super().__init__(parent)
         self.__current_frame = 0
-        self.layout = QHBoxLayout(self)
-        self.setContentsMargins(50, 0, 50, 0)
-        self.progress = QProgressBar(self)
-        self.progress.setValue(0)
-        self.layout.addWidget(self.progress, alignment=Qt.AlignVCenter)
 
-        self.th = Thread(src, save_path, src, self)
+        self.layout = QHBoxLayout(self)
+
+        self.progress_widget = QWidget(self)
+        self.progress_widget.layout = QHBoxLayout(self)
+        self.setContentsMargins(50, 0, 50, 0)
+        self.progress = QProgressBar(self.progress_widget)
+        self.progress.setValue(0)
+        self.progress_widget.layout.addWidget(self.progress, alignment=Qt.AlignVCenter)
+
+        self.stacked_widget = QStackedWidget(self)
+        self.stacked_widget.addWidget(self.progress_widget)
+        
+
+        self.layout.addWidget(self.stacked_widget)
+
+        self.th = VideoThread(src, save_path, parent=self)
         self.th.start()
         self.setLayout(self.layout)
 
@@ -155,6 +165,8 @@ class TabViewerItemWidget(QWidget):
     def counter(self):
         self.__current_frame += 1
         self.progress.setValue(int(self.__current_frame / self.th.frame_count * 100))
+
+
 
 class TabViewerWidget(QWidget):
     def __init__(self, parent=None):

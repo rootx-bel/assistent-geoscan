@@ -58,7 +58,7 @@ class MainWidget(QWidget):
 
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
         self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
-        self.live_widget.display.th.croped.connect(self.crop_widget.add_crop)
+        self.live_widget.display.th.cropped.connect(self.crop_widget.add_crop)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
