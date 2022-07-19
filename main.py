@@ -6,7 +6,8 @@ from ui.live import LiveWidget
 from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
-
+from cv2 import resize
+from PyQt5.QtCore import Qt
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
