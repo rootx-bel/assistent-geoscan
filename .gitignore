@@ -7,3 +7,4 @@ back/models/modelll.pth
 saves/*.json
 setup.py
 build/**
+saves/**
