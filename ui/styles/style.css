@@ -1,0 +1,23 @@
+#main, #crop_widget {
+  border-image: url("ui/images/home/background.png") 0 0 0 0;
+}
+
+#settings_panel {
+  background-color: rgba(150, 150, 150, 50);
+  border-radius: 20%;
+}
+
+QSlider::groove:horizontal {
+  background: rgba(255, 255, 255, 100);
+  height: 5px;
+  border-radius: 2px;
+}
+
+QSlider::handle:horizontal {
+  background: rgba(255, 255, 255, 255);
+  border: 0px transparent;
+  width: 16px;
+  margin-top: -6px;
+  margin-bottom: -6px;
+  border-radius: 8px;
+}
