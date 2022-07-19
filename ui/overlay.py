@@ -160,6 +160,9 @@ class AlarmWidget(QLabel):
         else:
             super().hide()
 
+    def load(self, visible):
+        self.__visible = not visible
+
 class Overlay():
     def __init__(self, parent=None):
         self.__parent = parent

@@ -66,8 +66,9 @@ class FrameProcessor():
         # crop = None
         # with torch.no_grad():
         #     self.model.eval()
+        #     img_orig = img.copy()
+        #     img_orig = cv2.resize(img_orig, (1920, 1080))
         #     img = cv2.resize(img, (self.width, self.height))
-        #     img_orig = img
         #     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         #     img = self.transform(img).unsqueeze(0)
         #     img.to(self.device)
@@ -102,6 +103,7 @@ class FrameProcessor():
         #         detect = True
         #     open_cv_image[np.all(open_cv_image == (128, 0, 0), axis=-1)] = self.color
         #     open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
+        #     open_cv_image = cv2.resize(open_cv_image, (1920, 1080))
         #     open_cv_image = cv2.addWeighted(img_orig, 0.8, open_cv_image, self.light, 0.0)
         #     open_cv_image = np.array(open_cv_image)
         # if video:
@@ -112,7 +114,7 @@ class FrameProcessor():
         #     self.numframe += 1
         # crop = np.array(open_cv_image[max-40:max2+40, min-40:min2+40])
         # return open_cv_image, detect, data, crop
-        return img, False, [47.8756, 56.7835, 20.0], img
+        return img, True, [47.8756, 56.7835, 20.0], img
 
     def process_subtitles(self, path):
         # out = sp.run(['back/ffmpeg','-i', path, '-map', 's:0', '-f','webvtt','-'], stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)

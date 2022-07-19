@@ -52,6 +52,7 @@ class MainWidget(QWidget):
         )
 
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
+        self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
@@ -125,6 +126,7 @@ class MainWindow(QMainWindow):
         self.main_widget.settings_widget.result = result
         self.main_widget.settings_widget.setts.messages_sound_button.load(result["sound"])
         self.main_widget.settings_widget.setts.messages_visual_button.load(result["visual"])
+        self.main_widget.overlay.alarm.load(result["visual"])
         self.main_widget.overlay.bottom_lay.volume_widget.load(result["volume"])
         self.main_widget.overlay.bottom_lay.brightness_widget.load(result["brightness"])
         self.main_widget.settings_widget.setts.color_picker.change_color(result["color"])
