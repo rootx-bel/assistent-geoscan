@@ -1,8 +1,4 @@
-#main {
-  border-image: url("ui/images/home/background.png") 0 0 0 0;
-}
-
-#settings_widget {
+#main, #crop_widget {
   border-image: url("ui/images/home/background.png") 0 0 0 0;
 }
 
@@ -25,15 +21,3 @@ QSlider::handle:horizontal {
   margin-bottom: -6px;
   border-radius: 8px;
 }
-
-/* #load-button {
-    background-color: black;
-    border-radius: 0%;
-}
-
-
-
-#dots {
-    background-color: green;
-    border-radius: 0%;
-} */

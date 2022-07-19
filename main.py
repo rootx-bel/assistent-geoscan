@@ -6,8 +6,8 @@ from ui.live import LiveWidget
 from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
-from cv2 import resize
-from PyQt5.QtCore import Qt
+from ui.crop import CropWidget
+
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -23,6 +23,7 @@ class MainWidget(QWidget):
         self.home_widget = HomeWidget(self)
         self.settings_widget = SettingsWidget()
         self.live_widget = LiveWidget(self)
+        self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
 
@@ -40,6 +41,7 @@ class MainWidget(QWidget):
 
         self.home_widget.vmenu.buttons.menu_click.connect(self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
+        self.overlay.top_lay.crop_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
         self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.__update_settings)
         self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(self.__update_settings)
@@ -80,6 +82,11 @@ class MainWidget(QWidget):
                 self.live_widget.set_video_thread(False)
             self.stacked_widget.setCurrentWidget(self.home_widget)
             self.overlay.hide()
+        elif value == "crop":
+            if self.crop_widget.isHidden():
+                self.crop_widget.show()
+            else:
+                self.crop_widget.hide()
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)
