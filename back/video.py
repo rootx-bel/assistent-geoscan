@@ -60,7 +60,7 @@ class FrameProcessor():
             checkpoint = torch.load("back/models/model.pth", map_location=torch.device('cpu'))
             self.model.load_state_dict(checkpoint["model_state"])
             self.model = nn.DataParallel(self.model)
-            self.source = torch.source("cuda:0" if torch.cuda.is_available() else "cpu")
+            self.source = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             self.model.to(self.source)
             self.model.eval()
             self.transform = T.Compose([
