@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from glob import glob
 from ui.live import Thread
-from imutils.video import count_frames
 
 class Button(QLabel):
     hovered = pyqtSignal(bool)
@@ -131,7 +130,6 @@ class LoadWidget(QWidget):
 class TabViewerItemWidget(QWidget):
     def __init__(self, src, save_path, parent=None):
         super().__init__(parent)
-        self.count = count_frames(src)
         self.__current_frame = 0
         self.layout = QHBoxLayout(self)
         self.setContentsMargins(50, 0, 50, 0)
@@ -140,14 +138,14 @@ class TabViewerItemWidget(QWidget):
         self.layout.addWidget(self.progress, alignment=Qt.AlignVCenter)
 
         self.th = Thread(src, save_path, src, self)
-        self.th.change_pixmap.connect(self.counter)
-
         self.th.start()
         self.setLayout(self.layout)
+
+        self.th.change_pixmap.connect(self.counter)
     
     def counter(self):
         self.__current_frame += 1
-        self.progress.setValue(int(self.__current_frame / self.count * 100))
+        self.progress.setValue(int(self.__current_frame / self.th.frame_count * 100))
 
 class TabViewerWidget(QWidget):
     def __init__(self, parent=None):
@@ -165,7 +163,11 @@ class TabViewerWidget(QWidget):
     def set_video(self, src_dir, save_dir):
         for video in glob(f'{src_dir}/*.*'):
             video = video.replace('\\', '/')
-            self.tab.addTab(TabViewerItemWidget(video, save_dir), video.split('/')[-1])
+            self.tab.addTab(TabViewerItemWidget(video, save_dir, self), video.split('/')[-1])   
+
+    def stop_threads(self):
+        for index in range(self.tab.count()):
+            self.tab.widget(index).th.quit()  
 
 if __name__  == '__main__':
     import sys

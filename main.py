@@ -76,10 +76,20 @@ class MainWidget(QWidget):
             self.overlay.set_visible_play(False)
             self.overlay.top_lay.crop_button.hide()
             self.stacked_widget.setCurrentWidget(self.load_widget)
-        elif value == "live" or value == "back":
+        elif value == "live":
             self.overlay.show()
             self.overlay.set_visible_play(False)
             self.stacked_widget.setCurrentWidget(self.live_widget)
+            self.overlay.top_lay.change_home_button('home')
+            self.live_widget.set_video_thread(True)
+        elif value == "back":
+            self.overlay.show()
+            self.overlay.set_visible_play(False)
+            if self.stacked_widget.currentWidget() is self.settings_widget:
+                self.stacked_widget.setCurrentWidget(self.live_widget)
+            elif self.stacked_widget.currentWidget() is self.video_widget:
+                self.video_widget.stop_threads()
+                self.stacked_widget.setCurrentWidget(self.load_widget)
             self.overlay.top_lay.change_home_button('home')
             self.live_widget.set_video_thread(True)
         elif value == "settings":
@@ -94,6 +104,9 @@ class MainWidget(QWidget):
         elif value == "home":
             if self.stacked_widget.currentWidget() is self.live_widget:
                 self.live_widget.set_video_thread(False)
+
+            if self.stacked_widget.currentWidget() is self.video_widget:
+                self.video_widget.stop_threads()
             self.stacked_widget.setCurrentWidget(self.home_widget)
             self.overlay.hide()
         elif value == "crop":
@@ -103,10 +116,13 @@ class MainWidget(QWidget):
                 self.crop_widget.hide()
         elif value == "load_start":
             load, save = self.load_widget.get_file_paths()
-            self.video_widget.set_video(load, save)
-            self.overlay.show()
-            self.overlay.set_visible_play(True)
-            self.stacked_widget.setCurrentWidget(self.video_widget)
+            if load != '' and save != '':
+                self.overlay.show()
+                self.overlay.set_visible_play(True)
+                self.overlay.top_lay.change_home_button('back')
+                self.overlay.top_lay.crop_button.hide()
+                self.video_widget.set_video(load, save)
+                self.stacked_widget.setCurrentWidget(self.video_widget)
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)

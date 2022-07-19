@@ -31,15 +31,17 @@ class Thread(QThread):
         self.save_path = save_path
         self.path = src_path
         self.name = 0
+        self.frame_count = 0
 
     def save_metadata(self, img, data):
         name = self.path.split('.')[0].split('/')[-1]
         if not os.path.exists(self.save_path + '/' + name):
             os.mkdir(self.save_path + '/' + name)
-        cv2.imwrite(str(self.save_path) +'/' + name + '/' + str(self.name) + '.jpg', img)
-        photo = gpsphoto.GPSPhoto(str(self.save_path) + name + '/' + str(self.name) + '.jpg')
+        path = str(self.save_path) +'/' + name + '/' + str(self.name) + '.jpg'
+        cv2.imwrite(path, img)
+        photo = gpsphoto.GPSPhoto(path)
         info = gpsphoto.GPSInfo((data[1], data[0]), alt=int(data[2]))
-        photo.modGPSData(info, str(self.save_path) + name + '/' + str(self.name) + '.jpg')
+        photo.modGPSData(info, path)
         self.name += 1
 
     def run(self):
@@ -48,6 +50,8 @@ class Thread(QThread):
         metadata_exists = False
         if type(self.device) == str:
             try:
+                property_id = int(cv2.CAP_PROP_FRAME_COUNT) 
+                self.frame_count = int(cv2.VideoCapture.get(cap, property_id))
                 self.fp.process_subtitles(self.device)
                 metadata_exists = True
             except:
