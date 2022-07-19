@@ -9,7 +9,7 @@ from torch.multiprocessing import set_start_method
 import subprocess as sp
 import pysrt
 import argparse
-from exif import Image
+# from exif import Image
 from GPSPhoto import gpsphoto
 import os
 
