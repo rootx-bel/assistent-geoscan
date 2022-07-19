@@ -169,6 +169,11 @@ class Overlay():
         self.top_lay = HorizontalTopLay(parent)
         self.bottom_lay = HorizontalBottomLay(parent)
         self.alarm = AlarmWidget(parent)
+        self.play_button = BottomBarButton(
+            QPixmap("ui/images/overlay/pause.png"),
+            QPixmap("ui/images/overlay/play.png"),
+            parent=parent
+        )
 
     def set_under(self, widget):
         widget.stackUnder(self.bottom_lay)
@@ -178,14 +183,20 @@ class Overlay():
         self.top_lay.hide()
         self.bottom_lay.hide()
         self.alarm.hide()
+        self.play_button.hide()
 
     def show(self):
         self.set_visible_settings(True)
         self.top_lay.show()
         self.bottom_lay.show()
-        self.alarm.show()
 
-    def set_visible_settings(self, visible=True):
+    def set_visible_play(self, visible = True):
+        if visible:
+            self.play_button.show()
+        else:
+            self.play_button.hide()
+
+    def set_visible_settings(self, visible = True):
         if visible:
             self.top_lay.setting_button.show()
             self.alarm.show()
@@ -202,3 +213,4 @@ class Overlay():
         self.top_lay.setGeometry(0, 0, parent_width, 100)
         self.bottom_lay.setGeometry(0, parent_height - 100, parent_width, 100)
         self.alarm.setGeometry(parent_width - 80, parent_height - 120, 100, 100)
+        self.play_button.setGeometry(parent_width // 2, parent_height - 200, 100, 100) 

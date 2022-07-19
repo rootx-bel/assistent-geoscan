@@ -67,14 +67,17 @@ class MainWidget(QWidget):
 
     def buttons_click(self, value):
         if value == "load":
-            pass
+            self.overlay.show()
+            self.overlay.set_visible_play(True)
         elif value == "live" or value == "back":
             self.overlay.show()
+            self.overlay.set_visible_play(False)
             self.stacked_widget.setCurrentWidget(self.live_widget)
             self.overlay.top_lay.change_home_button('home')
             self.live_widget.set_video_thread(True)
         elif value == "settings":
             self.overlay.show()
+            self.overlay.set_visible_play(False)
             self.overlay.set_visible_settings(False)
             if self.stacked_widget.currentWidget() is self.live_widget:
                 self.overlay.top_lay.change_home_button('back')
