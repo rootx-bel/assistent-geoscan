@@ -7,7 +7,7 @@ from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 from ui.crop import CropWidget
-from ui.load import LoadWidget
+from ui.load import LoadWidget, TabViewerWidget
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -24,6 +24,7 @@ class MainWidget(QWidget):
         self.settings_widget = SettingsWidget()
         self.live_widget = LiveWidget(self)
         self.load_widget = LoadWidget(self)
+        self.video_widget = TabViewerWidget(self)
         self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
@@ -32,6 +33,7 @@ class MainWidget(QWidget):
         self.stacked_widget.addWidget(self.live_widget)
         self.stacked_widget.addWidget(self.settings_widget)
         self.stacked_widget.addWidget(self.load_widget)
+        self.stacked_widget.addWidget(self.video_widget)
 
         self.stacked_widget.setCurrentWidget(self.home_widget)
 
@@ -100,7 +102,11 @@ class MainWidget(QWidget):
             else:
                 self.crop_widget.hide()
         elif value == "load_start":
-            pass
+            load, save = self.load_widget.get_file_paths()
+            self.video_widget.set_video(load, save)
+            self.overlay.show()
+            self.overlay.set_visible_play(True)
+            self.stacked_widget.setCurrentWidget(self.video_widget)
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)

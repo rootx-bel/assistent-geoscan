@@ -1,6 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QApplication, QTabWidget
-from PyQt5.QtCore import Qt, pyqtSignal, QEvent
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QApplication, QTabWidget, QProgressBar
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
+from glob import glob
+from ui.live import Thread
+from imutils.video import count_frames
 
 class Button(QLabel):
     hovered = pyqtSignal(bool)
@@ -81,7 +84,6 @@ class LoadPanel(QWidget):
         self.start_button = Button(QPixmap("ui/images/load/start.png"),self)
         self.start_button.setObjectName("load_start")
         self.layout.addWidget(self.start_button, alignment=Qt.AlignHCenter)
-    
 
     def resizeEvent(self, event):
         self.label.resize(self.size())
@@ -123,18 +125,47 @@ class LoadWidget(QWidget):
         self.background.resize(self.size())
         super().resizeEvent(event)
 
+    def get_file_paths(self):
+        return self.panel.load_file_dialog_form.field.text.text(), self.panel.save_file_dialog_form.field.text.text()
+
+class TabViewerItemWidget(QWidget):
+    def __init__(self, src, save_path, parent=None):
+        super().__init__(parent)
+        self.count = count_frames(src)
+        self.__current_frame = 0
+        self.layout = QHBoxLayout(self)
+        self.setContentsMargins(50, 0, 50, 0)
+        self.progress = QProgressBar(self)
+        self.progress.setValue(0)
+        self.layout.addWidget(self.progress, alignment=Qt.AlignVCenter)
+
+        self.th = Thread(src, save_path, src, self)
+        self.th.change_pixmap.connect(self.counter)
+
+        self.th.start()
+        self.setLayout(self.layout)
+    
+    def counter(self):
+        self.__current_frame += 1
+        self.progress.setValue(int(self.__current_frame / self.count * 100))
+
 class TabViewerWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        tab = QTabWidget(self)
-        tab.addTab(QWidget(), "Tab 1")
-        tab.addTab(QWidget(), "Tab 2")
-        
+        self.tab = QTabWidget(self)
+        self.setContentsMargins(100, 0, 100, 0)
         self.layout = QVBoxLayout(self)
-        self.layout.addWidget(tab)
+        self.layout.addStretch(1)
+        self.layout.addWidget(self.tab, stretch=10)
+        self.layout.addStretch(1)
 
         self.setLayout(self.layout)
+
+    def set_video(self, src_dir, save_dir):
+        for video in glob(f'{src_dir}/*.*'):
+            video = video.replace('\\', '/')
+            self.tab.addTab(TabViewerItemWidget(video, save_dir), video.split('/')[-1])
 
 if __name__  == '__main__':
     import sys

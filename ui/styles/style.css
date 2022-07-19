@@ -32,17 +32,33 @@ QSlider::handle:horizontal {
   border-radius: 8px;
 }
 
-QTabWidget::pane {
-  border-image: url("ui/images/home/background.png") 0 0 0 0;;
-} 
-
 QTabBar::tab {
-  background: rgb(230, 230, 230); 
-  border: 1px solid lightgray; 
+  background: rgba(150, 150, 150, 50); 
+  color: rgb(255, 255, 255);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   padding: 15px;
 } 
 
 QTabBar::tab:selected { 
-  background: rgb(245, 245, 245); 
+  background: rgba(150, 150, 150, 50); 
+  color: rgb(252, 90, 0);
   margin-bottom: -1px; 
+}
+
+QTabWidget::pane {
+  background: rgba(150, 150, 150, 50); 
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+} 
+
+QProgressBar {
+  border-radius: 10px;
+  text-align: center;
+}
+
+QProgressBar::chunk {
+  border-radius: 10px;
+  background-color: #009688;
 }

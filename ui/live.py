@@ -34,12 +34,12 @@ class Thread(QThread):
 
     def save_metadata(self, img, data):
         name = self.path.split('.')[0].split('/')[-1]
-        if os.path.exists(self.save_path + '/' + name) == False:
+        if not os.path.exists(self.save_path + '/' + name):
             os.mkdir(self.save_path + '/' + name)
-        cv2.imwrite(str(self.save_path) + '/' + name + '/' + str(self.name) + '.jpg', img)
-        photo = gpsphoto.GPSPhoto(str(self.save_path) + '/' + name + '/' + str(self.name) + '.jpg')
+        cv2.imwrite(str(self.save_path) +'/' + name + '/' + str(self.name) + '.jpg', img)
+        photo = gpsphoto.GPSPhoto(str(self.save_path) + name + '/' + str(self.name) + '.jpg')
         info = gpsphoto.GPSInfo((data[1], data[0]), alt=int(data[2]))
-        photo.modGPSData(info, str(self.save_path) + '/' + name + '/' + str(self.name) + '.jpg')
+        photo.modGPSData(info, str(self.save_path) + name + '/' + str(self.name) + '.jpg')
         self.name += 1
 
     def run(self):
