@@ -115,12 +115,23 @@ class HorizontalTopLay(QWidget):
         self.setStyleSheet("background-color :rgba(0, 0, 0, 0)")
         self.top_layout = QHBoxLayout(self)
         self.setContentsMargins(0, 0, 0, 0)
+
+        self.crop_home = QHBoxLayout(self)
         self.home_button = TopBarButton(QPixmap("ui/images/overlay/home.png"))
         self.home_button.setObjectName("home")
+        self.crop_home.addWidget(self.home_button, alignment=Qt.AlignTop | Qt.AlignLeft)
+    
+        self.crop_button = TopBarButton(QPixmap("ui/images/overlay/crop.png"))
+        self.crop_button.setObjectName("crop")
+        self.crop_home.addWidget(self.crop_button, alignment=Qt.AlignTop | Qt.AlignLeft)
+        self.crop_home.addStretch(5)
+
         self.setting_button = TopBarButton(QPixmap("ui/images/overlay/gear.png"))
         self.setting_button.setObjectName("settings")
-        self.top_layout.addWidget(self.home_button, alignment=Qt.AlignTop | Qt.AlignLeft)
+        
+        self.top_layout.addLayout(self.crop_home)
         self.top_layout.addWidget(self.setting_button, alignment=Qt. AlignTop | Qt.AlignRight)
+       
         self.setLayout(self.top_layout)
 
     def change_home_button(self, name):
@@ -175,9 +186,11 @@ class Overlay():
         if visible:
             self.top_lay.setting_button.show()
             self.alarm.show()
+            self.top_lay.crop_button.show()
         else:
             self.top_lay.setting_button.hide()
             self.alarm.hide()
+            self.top_lay.crop_button.hide()
 
     def resizeEvent(self, event):
         parent_width = self.__parent.frameGeometry().width()
