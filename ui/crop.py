@@ -19,48 +19,55 @@ class CropItemWidget(QWidget):
         return QImage(img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
 
     def set_images(self, orig, mask):
-        self.orig_crop.setPixmap(QPixmap.fromImage(self.__convert2qt(orig)))
-        self.mask_crop.setPixmap(QPixmap.fromImage(self.__convert2qt(mask)))
+        orig_pixmap = QPixmap.fromImage(self.__convert2qt(orig))
+        mask_pixmap = QPixmap.fromImage(self.__convert2qt(mask))
+        if not orig_pixmap.isNull() and not mask_pixmap.isNull():
+            self.orig_crop.setPixmap(orig_pixmap)
+            self.mask_crop.setPixmap(mask_pixmap)
 
     def resizeEvent(self, event):
-        self.orig_crop.setPixmap(
-            self.orig_crop.pixmap().scaled(
-                self.orig_crop.width(),
-                2147483647,
-                Qt.KeepAspectRatio
+        if self.orig_crop.pixmap() is not None:
+            self.orig_crop.setPixmap(
+                self.orig_crop.pixmap().scaled(
+                    self.orig_crop.width(),
+                    2147483647
+                )
             )
-        )
-        self.mask_crop.setPixmap(
-            self.mask_crop.pixmap().scaled(
-                self.mask_crop.width(),
-                2147483647,
-                Qt.KeepAspectRatio
+        if self.mask_crop.pixmap() is not None:
+            self.mask_crop.setPixmap(
+                self.mask_crop.pixmap().scaled(
+                    self.mask_crop.width(),
+                    2147483647
+                )
             )
-        )
         return super().resizeEvent(event)
 
-class CropWidget(QScrollArea):
+class CropWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
     
     def initUI(self):
-        self.back = QLabel(self)
-        self.back.setObjectName('crop_widget')
+        self.setContentsMargins(0, 0, 0, 0)
+        self.scroll = QScrollArea(self)
+        self.scroll.setStyleSheet("""border-image: url("ui/images/home/background.png") 0 0 0 0;""")
         self.area_widget = QWidget(self)
         self.area_layout = QVBoxLayout(self)
 
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setWidgetResizable(True)
-        self.setWidget(self.area_widget)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.area_widget)
 
         self.area_widget.setLayout(self.area_layout)
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.scroll)
+        self.setLayout(self.layout)
 
     def add_crop(self, orig, mask):
         crop_item = CropItemWidget(orig, mask)
         self.area_layout.addWidget(crop_item)
 
     def resizeEvent(self, event):
-        self.back.resize(self.size())
+        self.scroll.setGeometry(0, 0, self.frameGeometry().width(), self.frameGeometry().height())
         return super().resizeEvent(event)

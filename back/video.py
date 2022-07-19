@@ -112,9 +112,10 @@ class FrameProcessor():
         #     end = gps.index(')', gps_index)
         #     data = [float(coord) for coord in gps[gps_index + 1: end].split(',')]
         #     self.numframe += 1
-        # crop = np.array(open_cv_image[max-40:max2+40, min-40:min2+40])
-        # return open_cv_image, detect, data, crop
-        return img, True, [47.8756, 56.7835, 20.0], img
+        # crop = np.array(open_cv_image[max*3-100:max2*3+100, min*3-100:min2*3+100])
+        # crop_orig = np.array(img_orig[max*3-100:max2*3+100, min*3-100:min2*3+100])
+        # return open_cv_image, detect, data, crop_orig, crop
+        return img, True, [47.8756, 56.7835, 20.0], img, img
 
     def process_subtitles(self, path):
         # out = sp.run(['back/ffmpeg','-i', path, '-map', 's:0', '-f','webvtt','-'], stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)

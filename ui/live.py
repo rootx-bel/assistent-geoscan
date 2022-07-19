@@ -8,6 +8,7 @@ import piexif
 import os
 from exif import Image
 from GPSPhoto import gpsphoto
+import numpy as np
 
 try:
     import wx
@@ -21,6 +22,7 @@ class Thread(QThread):
     scaled_size = QSize(width, height)
     fp = FrameProcessor()
     detected = pyqtSignal(bool)
+    croped = pyqtSignal(np.ndarray, np.ndarray)
 
     def __init__(self, src_path, save_path, device, parent=None):
         self.__run = True
@@ -43,16 +45,24 @@ class Thread(QThread):
     def run(self):
         cap = cv2.VideoCapture(self.device)
         video = False
+        metadata_exists = False
         if type(self.device) == str:
-            self.fp.process_subtitles(self.device)
+            try:
+                self.fp.process_subtitles(self.device)
+                metadata_exists = True
+            except:
+                pass
             video = True
         while self.__run:
             ret, frame = cap.read()
             if ret:
-                img, is_detected, data, crop = self.fp.get_segmentation(frame, video)
+                img, is_detected, data, crop_orig, crop  = self.fp.get_segmentation(frame, video)
                 self.detected.emit(is_detected)
                 if is_detected:
-                    self.save_metadata(img, data)
+                    if metadata_exists:
+                        self.save_metadata(img, data)
+                    self.croped.emit(crop_orig, crop)
+                    
                 convertToQtFormat = QImage(
                     img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
                 p = convertToQtFormat.scaled(
