@@ -51,6 +51,8 @@ class MainWidget(QWidget):
             )
         )
 
+        self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 

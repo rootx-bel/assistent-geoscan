@@ -20,6 +20,7 @@ class Thread(QThread):
     change_pixmap = pyqtSignal(QImage)
     scaled_size = QSize(width, height)
     fp = FrameProcessor()
+    detected = pyqtSignal(bool)
 
     def __init__(self, src_path, save_path, device, parent=None):
         self.__run = True
@@ -49,6 +50,7 @@ class Thread(QThread):
             ret, frame = cap.read()
             if ret:
                 img, is_detected, data, crop = self.fp.get_segmentation(frame, video)
+                self.detected.emit(is_detected)
                 if is_detected:
                     self.save_metadata(img, data)
                 convertToQtFormat = QImage(
