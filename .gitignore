@@ -5,3 +5,5 @@ back/models/modell.pth
 back/models/modelll.pth
 .vscode
 saves/*.json
+setup.py
+build/**
