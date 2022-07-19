@@ -31,3 +31,18 @@ QSlider::handle:horizontal {
   margin-bottom: -6px;
   border-radius: 8px;
 }
+
+QTabWidget::pane {
+  border-image: url("ui/images/home/background.png") 0 0 0 0;;
+} 
+
+QTabBar::tab {
+  background: rgb(230, 230, 230); 
+  border: 1px solid lightgray; 
+  padding: 15px;
+} 
+
+QTabBar::tab:selected { 
+  background: rgb(245, 245, 245); 
+  margin-bottom: -1px; 
+}

@@ -1,14 +1,14 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QApplication, QSizePolicy
-from PyQt5.QtCore import Qt, QUrl, QDir, pyqtSignal, QEvent
-from PyQt5.QtGui import QMouseEvent, QPixmap
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QApplication, QTabWidget
+from PyQt5.QtCore import Qt, pyqtSignal, QEvent
+from PyQt5.QtGui import QPixmap
 
-class PathButton(QLabel):
+class Button(QLabel):
     hovered = pyqtSignal(bool)
-    clicked = pyqtSignal(bool)
+    clicked = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, pixmap, parent=None):
         super().__init__(parent)
-        self.setPixmap(QPixmap("ui/images/load/folder.png"))
+        self.setPixmap(pixmap)
 
     def enterEvent(self, event):
         self.hovered.emit(True)
@@ -19,7 +19,7 @@ class PathButton(QLabel):
         return super().leaveEvent(event)
 
     def mousePressEvent(self, event):
-        self.clicked.emit(True)
+        self.clicked.emit(self.objectName())
         return super().mousePressEvent(event)
 
 class PathField(QWidget):
@@ -35,7 +35,7 @@ class PathField(QWidget):
         # self.text.setSizePolicy(QSizePolicy(QSizePolicy.Ignored,
         #                                      QSizePolicy.Ignored))
 
-        self.button = PathButton(self)
+        self.button = Button(QPixmap("ui/images/load/folder.png"), self)
         self.button.clicked.connect(self.open_directory_dialog)
 
         self.layout.addWidget(self.text, alignment=Qt.AlignLeft)
@@ -77,6 +77,10 @@ class LoadPanel(QWidget):
 
         self.save_file_dialog_form = FileForm(self)
         self.layout.addWidget(self.save_file_dialog_form)
+
+        self.start_button = Button(QPixmap("ui/images/load/start.png"),self)
+        self.start_button.setObjectName("load_start")
+        self.layout.addWidget(self.start_button, alignment=Qt.AlignHCenter)
     
 
     def resizeEvent(self, event):
@@ -119,7 +123,18 @@ class LoadWidget(QWidget):
         self.background.resize(self.size())
         super().resizeEvent(event)
 
+class TabViewerWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        tab = QTabWidget(self)
+        tab.addTab(QWidget(), "Tab 1")
+        tab.addTab(QWidget(), "Tab 2")
         
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(tab)
+
+        self.setLayout(self.layout)
 
 if __name__  == '__main__':
     import sys
@@ -128,7 +143,7 @@ if __name__  == '__main__':
         _style = f.read()
         app.setStyleSheet(_style)
 
-    win = LoadWidget()
+    win = TabViewerWidget()
     win.resize(1920,1080)
     win.show()
     sys.exit(app.exec_())

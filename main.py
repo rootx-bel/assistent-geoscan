@@ -7,7 +7,7 @@ from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 from ui.crop import CropWidget
-
+from ui.load import LoadWidget
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -23,6 +23,7 @@ class MainWidget(QWidget):
         self.home_widget = HomeWidget(self)
         self.settings_widget = SettingsWidget()
         self.live_widget = LiveWidget(self)
+        self.load_widget = LoadWidget(self)
         self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
@@ -30,6 +31,7 @@ class MainWidget(QWidget):
         self.stacked_widget.addWidget(self.home_widget)
         self.stacked_widget.addWidget(self.live_widget)
         self.stacked_widget.addWidget(self.settings_widget)
+        self.stacked_widget.addWidget(self.load_widget)
 
         self.stacked_widget.setCurrentWidget(self.home_widget)
 
@@ -43,6 +45,7 @@ class MainWidget(QWidget):
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.crop_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.setting_button.clicked.connect(self.buttons_click)
+        self.load_widget.panel.start_button.clicked.connect(self.buttons_click)
         self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.__update_settings)
         self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(self.__update_settings)
         self.overlay.bottom_lay.volume_widget.pic_button.clicked.connect(lambda:
@@ -68,7 +71,9 @@ class MainWidget(QWidget):
     def buttons_click(self, value):
         if value == "load":
             self.overlay.show()
-            self.overlay.set_visible_play(True)
+            self.overlay.set_visible_play(False)
+            self.overlay.top_lay.crop_button.hide()
+            self.stacked_widget.setCurrentWidget(self.load_widget)
         elif value == "live" or value == "back":
             self.overlay.show()
             self.overlay.set_visible_play(False)
@@ -94,6 +99,8 @@ class MainWidget(QWidget):
                 self.crop_widget.show()
             else:
                 self.crop_widget.hide()
+        elif value == "load_start":
+            pass
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)
