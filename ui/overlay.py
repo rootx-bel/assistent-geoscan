@@ -178,6 +178,7 @@ class Overlay():
     def set_under(self, widget):
         widget.stackUnder(self.bottom_lay)
         widget.stackUnder(self.top_lay)
+        widget.stackUnder(self.play_button)
 
     def hide(self):
         self.top_lay.hide()
@@ -213,4 +214,4 @@ class Overlay():
         self.top_lay.setGeometry(0, 0, parent_width, 100)
         self.bottom_lay.setGeometry(0, parent_height - 100, parent_width, 100)
         self.alarm.setGeometry(parent_width - 80, parent_height - 120, 100, 100)
-        self.play_button.setGeometry(parent_width // 2, parent_height - 200, 100, 100) 
+        self.play_button.setGeometry(parent_width // 2, parent_height - 200, 34, 41) 

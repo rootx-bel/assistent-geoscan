@@ -6,8 +6,8 @@ from ui.live import LiveWidget
 from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
-from ui.crop import CropWidget
-from ui.load import LoadWidget, TabViewerWidget
+# from ui.crop import CropWidget
+from ui.load import LoadWidget, TabViewerWidget, VideoWidget
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
@@ -26,6 +26,7 @@ class MainWidget(QWidget):
         self.live_widget = LiveWidget(self)
         self.load_widget = LoadWidget(self)
         self.video_widget = TabViewerWidget(self)
+        self.mediaplayer_widget = VideoWidget(None)
         # self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
@@ -44,6 +45,7 @@ class MainWidget(QWidget):
         self.settings_widget.setts.messages_visual_button.clicked.connect(self.overlay.alarm.change_visible)
         self.settings_widget.changed.connect(self.accept_settings)
 
+        self.overlay.play_button.clicked.connect(self.buttons_click)
         self.home_widget.vmenu.buttons.menu_click.connect(self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.crop_button.clicked.connect(self.buttons_click)
@@ -59,7 +61,6 @@ class MainWidget(QWidget):
 
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
         self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
-        #self.live_widget.display.th.cropped.connect(self.crop_widget.add_crop)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
@@ -90,6 +91,7 @@ class MainWidget(QWidget):
                 self.overlay.set_visible_play(True)
                 self.stacked_widget.setCurrentWidget(self.video_widget)
             elif self.stacked_widget.currentWidget() is self.settings_widget and self.last_widget is self.live_widget:
+                self.live_widget.set_video_thread(True)
                 self.overlay.set_visible_play(False)
                 self.stacked_widget.setCurrentWidget(self.live_widget)
                 self.overlay.top_lay.change_home_button('home')
@@ -99,7 +101,6 @@ class MainWidget(QWidget):
                 self.video_widget.stop_threads()
                 self.stacked_widget.setCurrentWidget(self.load_widget)
                 self.overlay.top_lay.change_home_button('home')
-            self.live_widget.set_video_thread(True)
         elif value == "settings":
             self.overlay.show()
             self.overlay.set_visible_play(False)
@@ -133,6 +134,8 @@ class MainWidget(QWidget):
                 self.overlay.alarm.hide()
                 self.video_widget.set_video(load, save)
                 self.stacked_widget.setCurrentWidget(self.video_widget)
+        elif value == False or value == True:
+            self.mediaplayer_widget.play()
 
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)

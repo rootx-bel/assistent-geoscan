@@ -7,16 +7,10 @@ import back.network as network
 import torch.nn as nn
 from torch.multiprocessing import set_start_method
 import subprocess as sp
-import pysrt
 import argparse
-# from exif import Image
 from GPSPhoto import gpsphoto
 import os
-
-
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, pyqtSlot
+from PyQt5.QtCore import QThread, pyqtSignal, QSize
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', action='store_true', help='Debug mode')
@@ -114,7 +108,6 @@ class FrameProcessor():
                         min2 = r[0] + r[2]
                     if r[1] + r[3] > max2:
                         max2 = r[1] + r[3]
-                #cv2.rectangle(open_cv_image,(min,max),(min2,max2),(0,255,0),2)
                 if open_cv_image[np.all(open_cv_image == (128, 0, 0), axis=-1)].any():
                     detect = True
                 open_cv_image[np.all(open_cv_image == (128, 0, 0), axis=-1)] = self.color
@@ -128,7 +121,6 @@ class FrameProcessor():
         return img, False, img, img
 
     def set_settings(self, params):
-        #Настройки; В параметры приходит словарь: color, light
         self.color = params['color']
         self.light = params['brightness']
         self.light = self.light * 0.01
@@ -189,7 +181,6 @@ class VideoThread(QThread):
         self.__run = True
         super().__init__(parent)
         self.source = source
-        self.save_path = save_path
         self.frame_count = 0
         self.file_processor = FileProcessor(source, save_path)
 
@@ -230,14 +221,36 @@ class VideoThread(QThread):
 
 class VideoWriter():
     def __init__(self, save_path, fps = 30, frame_size = (640,480)):
-        self.out_stream = cv2.VideoWriter(f'{save_path}/output.avi',cv2.VideoWriter_fourcc(*'DIVX'), fps, frame_size)
+        self.save_path = f'{save_path}/output.avi'
+        self.out_stream = cv2.VideoWriter(self.save_path,cv2.VideoWriter_fourcc(*'DIVX'), fps, frame_size)
         self.frame_size = frame_size
 
     def addFrame(self, frame):
-        resized = frame.copy()
-        resized = resized.resize(self.frame_size)
+        resized = cv2.resize(frame, self.frame_size)
         self.out_stream.write(resized)
 
     def save(self):
         self.out_stream.release()
-        print('saved')
+
+# class VideoReader(QThread):
+#     change_pixmap = pyqtSignal(np.ndarray)
+
+#     def __init__(self, source, parent=None):
+#         self.__run = True
+#         super().__init__(parent)
+#         self.source = source
+
+#     def run(self):
+#         cap = cv2.VideoCapture(self.source)
+#         while self.__run and cap.isOpened():
+#             ret, frame = cap.read()
+#             if ret:
+#                 self.change_pixmap.emit(frame)
+
+#     def quit(self):
+#         self.__run = False
+#         super().quit()
+
+    def start(self):
+        self.__run = True
+        super().start()

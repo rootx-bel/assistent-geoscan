@@ -1,8 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QScrollArea, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
-from PIL.ImageQt import ImageQt
-from PIL import Image
 
 class CropItemWidget(QWidget):
     def __init__(self, orig, mask, parent=None):
@@ -20,8 +18,6 @@ class CropItemWidget(QWidget):
 
     def __convert2qt(self, img):
         return QImage(img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
-        #imgg = Image.fromarray(img)
-        #return QImage(ImageQt(imgg))
 
     def set_images(self, orig, mask):
         orig_pixmap = QPixmap.fromImage(self.__convert2qt(orig))

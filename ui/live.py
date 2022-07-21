@@ -2,10 +2,7 @@ import cv2
 from back.video import VideoThread
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import pyqtSignal, QSize, Qt, pyqtSlot
-from exif import Image
-from GPSPhoto import gpsphoto
-import numpy as np
+from PyQt5.QtCore import pyqtSignal, QSize, Qt
 
 class PlayStreaming(QWidget):
     resize_signal = pyqtSignal(QSize)
