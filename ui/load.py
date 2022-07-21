@@ -136,37 +136,40 @@ class LoadWidget(QWidget):
     def get_file_paths(self):
         return self.panel.load_file_dialog_form.field.text.text(), self.panel.save_file_dialog_form.field.text.text()
 
-class TabViewerItemWidget(QWidget):
+class ProgressWidget(QWidget):
     def __init__(self, src, save_path, parent=None):
         super().__init__(parent)
         self.__current_frame = 0
-
         self.layout = QHBoxLayout(self)
-
-        self.progress_widget = QWidget(self)
-        self.progress_widget.layout = QHBoxLayout(self)
-        self.setContentsMargins(50, 0, 50, 0)
-        self.progress = QProgressBar(self.progress_widget)
+        self.progress = QProgressBar(self)
         self.progress.setValue(0)
-        self.progress_widget.layout.addWidget(self.progress, alignment=Qt.AlignVCenter)
-
-        self.stacked_widget = QStackedWidget(self)
-        self.stacked_widget.addWidget(self.progress_widget)
-        
-
-        self.layout.addWidget(self.stacked_widget)
+        self.layout.addWidget(self.progress, alignment=Qt.AlignVCenter )
 
         self.th = VideoThread(src, save_path, parent=self)
         self.th.start()
-        self.setLayout(self.layout)
-
         self.th.change_pixmap.connect(self.counter)
-    
+
     def counter(self):
         self.__current_frame += 1
         self.progress.setValue(int(self.__current_frame / self.th.frame_count * 100))
 
+class TabViewerItemWidget(QWidget):
+    def __init__(self, src, save_path, parent=None):
+        super().__init__(parent)
+        
 
+        self.layout = QHBoxLayout(self)
+        self.setContentsMargins(50, 0, 50, 0)
+        
+        self.progress_widget = ProgressWidget(src, save_path, self)
+
+        self.stacked_widget = QStackedWidget(self)
+        self.stacked_widget.addWidget(self.progress_widget)
+        
+        self.layout.addWidget(self.stacked_widget)
+
+
+        self.setLayout(self.layout)
 
 class TabViewerWidget(QWidget):
     def __init__(self, parent=None):
@@ -188,4 +191,4 @@ class TabViewerWidget(QWidget):
 
     def stop_threads(self):
         for index in range(self.tab.count()):
-            self.tab.widget(index).th.quit()  
+            self.tab.widget(index).progress_widget.th.quit()
