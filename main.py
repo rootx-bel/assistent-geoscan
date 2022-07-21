@@ -12,6 +12,7 @@ from ui.load import LoadWidget, TabViewerWidget
 class MainWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.last_widget = None
         self.setupUI()
 
     def setupUI(self):
@@ -76,6 +77,7 @@ class MainWidget(QWidget):
             self.overlay.set_visible_play(False)
             self.overlay.top_lay.crop_button.hide()
             self.stacked_widget.setCurrentWidget(self.load_widget)
+            self.overlay.alarm.hide()
         elif value == "live":
             self.overlay.show()
             self.overlay.set_visible_play(False)
@@ -84,18 +86,25 @@ class MainWidget(QWidget):
             self.live_widget.set_video_thread(True)
         elif value == "back":
             self.overlay.show()
-            self.overlay.set_visible_play(False)
-            if self.stacked_widget.currentWidget() is self.settings_widget:
+            if self.stacked_widget.currentWidget() is self.settings_widget and self.last_widget is self.video_widget:
+                self.overlay.set_visible_play(True)
+                self.stacked_widget.setCurrentWidget(self.video_widget)
+            elif self.stacked_widget.currentWidget() is self.settings_widget and self.last_widget is self.live_widget:
+                self.overlay.set_visible_play(False)
                 self.stacked_widget.setCurrentWidget(self.live_widget)
+                self.overlay.top_lay.change_home_button('home')
             elif self.stacked_widget.currentWidget() is self.video_widget:
+                self.overlay.set_visible_play(False)
+                self.overlay.alarm.hide()
                 self.video_widget.stop_threads()
                 self.stacked_widget.setCurrentWidget(self.load_widget)
-            self.overlay.top_lay.change_home_button('home')
+                self.overlay.top_lay.change_home_button('home')
             self.live_widget.set_video_thread(True)
         elif value == "settings":
             self.overlay.show()
             self.overlay.set_visible_play(False)
             self.overlay.set_visible_settings(False)
+            self.last_widget = self.stacked_widget.currentWidget()
             if self.stacked_widget.currentWidget() is self.live_widget:
                 self.overlay.top_lay.change_home_button('back')
             self.stacked_widget.setCurrentWidget(self.settings_widget)
@@ -121,6 +130,7 @@ class MainWidget(QWidget):
                 self.overlay.set_visible_play(True)
                 self.overlay.top_lay.change_home_button('back')
                 self.overlay.top_lay.crop_button.hide()
+                self.overlay.alarm.hide()
                 self.video_widget.set_video(load, save)
                 self.stacked_widget.setCurrentWidget(self.video_widget)
 
