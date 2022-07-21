@@ -178,7 +178,7 @@ class FileProcessor():
         return subtitles
 
 class VideoThread(QThread):
-    change_pixmap = pyqtSignal(QImage)
+    change_pixmap = pyqtSignal(np.ndarray)
     detected = pyqtSignal(bool)
     cropped = pyqtSignal(np.ndarray, np.ndarray)
 
@@ -217,16 +217,8 @@ class VideoThread(QThread):
                         else:
                             self.file_processor.save_image(img)
                     self.cropped.emit(crop_orig, crop)
-
-                image = QImage()
-                if not video:
-                    convertToQtFormat = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
-                    image = convertToQtFormat.scaled(self.scaled_size)
-                self.change_pixmap.emit(image)
+                self.change_pixmap.emit(img)
             frame_number += 1
-
-    def scaled(self, scaled_size):
-        self.scaled_size = scaled_size
 
     def quit(self):
         self.__run = False
@@ -235,3 +227,17 @@ class VideoThread(QThread):
     def start(self):
         self.__run = True
         super().start()
+
+class VideoWriter():
+    def __init__(self, save_path, fps = 30, frame_size = (640,480)):
+        self.out_stream = cv2.VideoWriter(f'{save_path}/output.avi',cv2.VideoWriter_fourcc(*'DIVX'), fps, frame_size)
+        self.frame_size = frame_size
+
+    def addFrame(self, frame):
+        resized = frame.copy()
+        resized = resized.resize(self.frame_size)
+        self.out_stream.write(resized)
+
+    def save(self):
+        self.out_stream.release()
+        print('saved')

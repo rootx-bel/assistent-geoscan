@@ -2,7 +2,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDial
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from glob import glob
-from back.video import VideoThread
+
+from cv2 import VideoWriter
+from back.video import VideoThread, VideoWriter
 
 class Button(QLabel):
     hovered = pyqtSignal(bool)
@@ -148,10 +150,16 @@ class ProgressWidget(QWidget):
         self.th = VideoThread(src, save_path, parent=self)
         self.th.start()
         self.th.change_pixmap.connect(self.counter)
+        self.video_writer = VideoWriter(save_path)
 
-    def counter(self):
+    def counter(self, frame):
+        self.video_writer.addFrame(frame)
         self.__current_frame += 1
         self.progress.setValue(int(self.__current_frame / self.th.frame_count * 100))
+        print(self.progress.value)
+        if self.progress.value() == 100:
+            print("progress = 100")
+            self.video_writer.save()
 
 class TabViewerItemWidget(QWidget):
     def __init__(self, src, save_path, parent=None):
