@@ -8,3 +8,4 @@ saves/*.json
 setup.py
 build/**
 saves/**
+*.mp4
