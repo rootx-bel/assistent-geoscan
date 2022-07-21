@@ -25,7 +25,7 @@ class MainWidget(QWidget):
         self.live_widget = LiveWidget(self)
         self.load_widget = LoadWidget(self)
         self.video_widget = TabViewerWidget(self)
-        self.crop_widget = CropWidget()
+        # self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
 
@@ -58,7 +58,7 @@ class MainWidget(QWidget):
 
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
         self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
-        self.live_widget.display.th.cropped.connect(self.crop_widget.add_crop)
+        #self.live_widget.display.th.cropped.connect(self.crop_widget.add_crop)
 
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)

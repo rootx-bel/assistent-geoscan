@@ -197,7 +197,7 @@ class VideoThread(QThread):
         cap = cv2.VideoCapture(self.source)
         video = False
         frame_number = 0
-        if type(self.source) == str:
+        if type(self.source) == str and not("rtsp" in self.source) and not("http" in self.source):
             self.frame_count = int(cv2.VideoCapture.get(cap, int(cv2.CAP_PROP_FRAME_COUNT)))
             self.file_processor.load_subtitles()
             video = True

@@ -200,7 +200,7 @@ class Overlay():
         if visible:
             self.top_lay.setting_button.show()
             self.alarm.show()
-            self.top_lay.crop_button.show()
+            self.top_lay.crop_button.hide()
         else:
             self.top_lay.setting_button.hide()
             self.alarm.hide()
