@@ -12,16 +12,14 @@ class PlayStreaming(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.size = QSize(640, 480)
         self.initUI()
 
-    @pyqtSlot(QImage)
-    def setImage(self, image):
+    def setImage(self, img):
+        image = QImage()
+        convertToQtFormat = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_BGR888)
+        image = convertToQtFormat.scaled(self.size)
         self.label.setPixmap(QPixmap.fromImage(image))
-
-    def setCVImage(self, cvimg):
-        rgbImage = cv2.cvtColor(cvimg, cv2.COLOR_BGR2RGB)
-        qimg = QImage(
-            rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
 
     def initUI(self):
         self.label = QLabel(self)
@@ -30,8 +28,11 @@ class PlayStreaming(QWidget):
         self.layout.addWidget(self.label, alignment=Qt.AlignCenter)
         self.th = VideoThread(0, parent=self)
         self.th.change_pixmap.connect(self.setImage)
-        self.resize_signal.connect(self.th.scaled)
+        self.resize_signal.connect(self.resize_handle)
         self.setLayout(self.layout)
+
+    def resize_handle(self, size):
+        self.size = size
 
 
 class LiveWidget(QWidget):
