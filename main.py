@@ -185,6 +185,7 @@ if __name__ == "__main__":
 
     win = MainWindow()
     win.resize(1440, 900)
+    win.setWindowIcon(QIcon('ui/images/logo.png'))
     win.setMinimumSize(1440, 900)
     win.show()
     sys.exit(app.exec_())
