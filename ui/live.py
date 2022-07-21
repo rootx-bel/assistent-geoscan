@@ -7,13 +7,6 @@ from exif import Image
 from GPSPhoto import gpsphoto
 import numpy as np
 
-try:
-    import wx
-    app = wx.App(False)
-    width, height = wx.GetDisplaySize()
-except:
-    width, height = 1920, 1080
-
 class PlayStreaming(QWidget):
     resize_signal = pyqtSignal(QSize)
 
