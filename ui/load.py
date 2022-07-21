@@ -202,7 +202,6 @@ class VideoWidget(QWidget):
     def set_video(self):
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.path)))
         self.mediaPlayer.play()
-        self.mediaPlayer.pause()
 
     def resizeEvent(self, event):
         self.display.setGeometry(0, 0, self.parent().width(), self.parent().height())
