@@ -233,25 +233,6 @@ class VideoWriter():
     def save(self):
         self.out_stream.release()
 
-# class VideoReader(QThread):
-#     change_pixmap = pyqtSignal(np.ndarray)
-
-#     def __init__(self, source, parent=None):
-#         self.__run = True
-#         super().__init__(parent)
-#         self.source = source
-
-#     def run(self):
-#         cap = cv2.VideoCapture(self.source)
-#         while self.__run and cap.isOpened():
-#             ret, frame = cap.read()
-#             if ret:
-#                 self.change_pixmap.emit(frame)
-
-#     def quit(self):
-#         self.__run = False
-#         super().quit()
-
     def start(self):
         self.__run = True
         super().start()

@@ -7,7 +7,7 @@ from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 # from ui.crop import CropWidget
-from ui.load import LoadWidget, TabViewerWidget, VideoWidget
+from ui.load import LoadWidget, TabViewerWidget
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
