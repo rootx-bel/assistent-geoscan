@@ -220,8 +220,9 @@ class VideoThread(QThread):
         super().start()
 
 class VideoWriter():
-    def __init__(self, save_path, fps = 30, frame_size = (640,480)):
-        self.save_path = f'{save_path}/output.avi'
+    def __init__(self, save_path, file_name, fps = 30, frame_size = (640,480)):
+        file_name = file_name.replace('.', '_')
+        self.save_path = f'{save_path}/{file_name}.avi'
         self.out_stream = cv2.VideoWriter(self.save_path,cv2.VideoWriter_fourcc(*'DIVX'), fps, frame_size)
         self.frame_size = frame_size
 

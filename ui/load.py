@@ -7,7 +7,6 @@ from back.video import VideoThread, VideoWriter
 # from ui.live import PlayStreaming
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-
 # class VideoStreaming(PlayStreaming):
 #     def __init__(self, filename, parent = None):
 #         super().__init__(parent)
@@ -159,8 +158,9 @@ class ProgressWidget(QWidget):
 
         self.th = VideoThread(src, save_path, parent=self)
         self.th.start()
+        
+        self.video_writer = VideoWriter(save_path, self.th.file_processor.folder_path)
         self.th.change_pixmap.connect(self.counter)
-        self.video_writer = VideoWriter(f"{save_path}/{self.th.file_processor.folder_path}")
 
     def counter(self, frame):
         self.video_writer.addFrame(frame)
@@ -171,37 +171,27 @@ class ProgressWidget(QWidget):
             self.finished.emit(True)
 
 class VideoWidget(QWidget):
-    def __init__(self, path, parent=None):
-        #print(path)
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.path = path
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.StreamPlayback)
         self.mediaPlayer.setVolume(0)
         self.display = QVideoWidget(self)
-
         self.mediaPlayer.setVideoOutput(self.display)
-        #self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(path)))
         
         self.layout.addWidget(self.display, alignment=Qt.AlignCenter, stretch=1)
         self.setLayout(self.layout)
 
     def play(self):
-        #print(self.mediaPlayer.state())
-        #if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-            print("pause")
             self.mediaPlayer.pause()
         else:
-            #self.mediaPlayer.setPosition(0)
-            #self.display.show()
-            print("play")
             self.mediaPlayer.play()
     
-    def set_video(self):
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.path)))
-        self.mediaPlayer.play()
+    def set_video(self, path):
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(path)))
+        self.mediaPlayer.pause()
 
     def resizeEvent(self, event):
         self.display.setGeometry(0, 0, self.parent().width(), self.parent().height())
@@ -214,14 +204,13 @@ class TabViewerItemWidget(QWidget):
 
         self.layout = QHBoxLayout(self)
         self.setContentsMargins(50, 0, 50, 0)
-        
         self.progress_widget = ProgressWidget(src, save_path, self)
-        # self.video_widget.setStyleSheet("""background-color: green""")
+
+        self.video_widget = VideoWidget(self)
+        
         self.stacked_widget = QStackedWidget(self)
         self.stacked_widget.addWidget(self.progress_widget)
-
-        #self.video_widget = VideoWidget(self.progress_widget.video_writer.save_path, self)
-        #self.stacked_widget.addWidget(self.video_widget)
+        self.stacked_widget.addWidget(self.video_widget)
 
         self.progress_widget.finished.connect(self.set_video_widget)
         
@@ -229,11 +218,8 @@ class TabViewerItemWidget(QWidget):
         self.setLayout(self.layout)
 
     def set_video_widget(self):
-        self.video_widget = VideoWidget(self.progress_widget.video_writer.save_path, self)
-        self.stacked_widget.addWidget(self.video_widget)
+        self.video_widget.set_video(self.progress_widget.video_writer.save_path)
         self.stacked_widget.setCurrentWidget(self.video_widget)
-        self.video_widget.set_video()
-        #self.video_widget.play()
 
 class TabViewerWidget(QWidget):
     def __init__(self, parent=None):

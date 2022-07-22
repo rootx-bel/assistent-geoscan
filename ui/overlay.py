@@ -170,10 +170,11 @@ class Overlay():
         self.bottom_lay = HorizontalBottomLay(parent)
         self.alarm = AlarmWidget(parent)
         self.play_button = BottomBarButton(
-            QPixmap("ui/images/overlay/pause.png"),
-            QPixmap("ui/images/overlay/play.png"),
+            QPixmap("ui/images/overlay/play_pause.png"),
+            QPixmap("ui/images/overlay/play_pause.png"),
             parent=parent
         )
+        self.play_button.setStyleSheet("""background: rgba(0, 0, 0, 0)""")
 
     def set_under(self, widget):
         widget.stackUnder(self.bottom_lay)
@@ -214,4 +215,4 @@ class Overlay():
         self.top_lay.setGeometry(0, 0, parent_width, 100)
         self.bottom_lay.setGeometry(0, parent_height - 100, parent_width, 100)
         self.alarm.setGeometry(parent_width - 80, parent_height - 120, 100, 100)
-        self.play_button.setGeometry(parent_width // 2, parent_height - 200, 34, 41) 
+        self.play_button.setGeometry(parent_width // 2, parent_height - 200, 84, 48) 

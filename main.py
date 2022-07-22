@@ -26,7 +26,6 @@ class MainWidget(QWidget):
         self.live_widget = LiveWidget(self)
         self.load_widget = LoadWidget(self)
         self.video_widget = TabViewerWidget(self)
-        self.mediaplayer_widget = VideoWidget(None)
         # self.crop_widget = CropWidget()
         self.overlay = Overlay(self)
         self.overlay.hide()
@@ -45,7 +44,6 @@ class MainWidget(QWidget):
         self.settings_widget.setts.messages_visual_button.clicked.connect(self.overlay.alarm.change_visible)
         self.settings_widget.changed.connect(self.accept_settings)
 
-        self.overlay.play_button.clicked.connect(self.buttons_click)
         self.home_widget.vmenu.buttons.menu_click.connect(self.buttons_click)
         self.overlay.top_lay.home_button.clicked.connect(self.buttons_click)
         self.overlay.top_lay.crop_button.clicked.connect(self.buttons_click)
@@ -62,12 +60,22 @@ class MainWidget(QWidget):
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
         self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
 
+        self.video_widget.tab.tabBarClicked.connect(self.tabbar_changed)
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.stacked_widget)
 
     def __update_settings(self, value):
         name = self.sender().objectName()
         self.settings_widget.change_result(name, value)
+
+    def tabbar_changed(self, current):
+        for index in range(self.video_widget.tab.count()):
+            try:
+                self.overlay.play_button.clicked.disconnect(self.video_widget.tab.widget(index).video_widget.play)
+            except:
+                pass
+        self.overlay.play_button.clicked.connect(self.video_widget.tab.widget(current).video_widget.play)
 
     def accept_settings(self, value):
         self.live_widget.set_settings(value)
@@ -134,9 +142,8 @@ class MainWidget(QWidget):
                 self.overlay.alarm.hide()
                 self.video_widget.set_video(load, save)
                 self.stacked_widget.setCurrentWidget(self.video_widget)
-        elif value == False or value == True:
-            self.mediaplayer_widget.play()
-
+                if self.video_widget.tab.count() > 0:
+                    self.tabbar_changed(0)
     def resizeEvent(self, event):
         self.overlay.resizeEvent(event)
         return super().resizeEvent(event)
