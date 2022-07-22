@@ -179,7 +179,7 @@ class Overlay():
     def set_under(self, widget):
         widget.stackUnder(self.bottom_lay)
         widget.stackUnder(self.top_lay)
-        widget.stackUnder(self.play_button)
+        # widget.stackUnder(self.play_button)
 
     def hide(self):
         self.top_lay.hide()

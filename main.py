@@ -7,6 +7,7 @@ from ui.settings import SettingsWidget
 from ui.home import HomeWidget
 from ui.overlay import Overlay
 # from ui.crop import CropWidget
+from back.sound import SoundAlarm
 from ui.load import LoadWidget, TabViewerWidget
 
 class MainWidget(QWidget):
@@ -27,6 +28,7 @@ class MainWidget(QWidget):
         self.load_widget = LoadWidget(self)
         self.video_widget = TabViewerWidget(self)
         # self.crop_widget = CropWidget()
+        self.sound = SoundAlarm("back/sound/alarm.wav")
         self.overlay = Overlay(self)
         self.overlay.hide()
 
@@ -41,6 +43,7 @@ class MainWidget(QWidget):
         self.overlay.set_under(self.stacked_widget)
         
         self.settings_widget.setts.messages_sound_button.clicked.connect(self.overlay.bottom_lay.volume_widget.pic_button.change_state)
+        self.settings_widget.setts.messages_sound_button.clicked.connect(self.sound.change_sound)
         self.settings_widget.setts.messages_visual_button.clicked.connect(self.overlay.alarm.change_visible)
         self.settings_widget.changed.connect(self.accept_settings)
 
@@ -51,6 +54,7 @@ class MainWidget(QWidget):
         self.load_widget.panel.start_button.clicked.connect(self.buttons_click)
         self.overlay.bottom_lay.brightness_widget.slider.valueChanged.connect(self.__update_settings)
         self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(self.__update_settings)
+        self.overlay.bottom_lay.volume_widget.slider.valueChanged.connect(self.sound.set_volume)
         self.overlay.bottom_lay.volume_widget.pic_button.clicked.connect(lambda:
             self.settings_widget.setts.messages_sound_button.setChecked(
                 not self.overlay.bottom_lay.volume_widget.pic_button.is_on
@@ -58,6 +62,7 @@ class MainWidget(QWidget):
         )
 
         self.live_widget.display.th.detected.connect(self.overlay.alarm.change_detect)
+        self.live_widget.display.th.detected.connect(self.sound.alarm)
         self.live_widget.display.th.change_pixmap.connect(self.overlay.alarm.show)
 
         self.video_widget.tab.tabBarClicked.connect(self.tabbar_changed)
@@ -180,6 +185,7 @@ class MainWindow(QMainWindow):
         self.main_widget.settings_widget.setts.messages_sound_button.load(result["sound"])
         self.main_widget.settings_widget.setts.messages_visual_button.load(result["visual"])
         self.main_widget.overlay.alarm.load(result["visual"])
+        self.main_widget.sound.load(result["sound"])
         self.main_widget.overlay.bottom_lay.volume_widget.load(result["volume"])
         self.main_widget.overlay.bottom_lay.brightness_widget.load(result["brightness"])
         self.main_widget.settings_widget.setts.color_picker.change_color(result["color"])
